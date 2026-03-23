@@ -1,0 +1,37 @@
+[project]
+name = "tts-dtat"
+description = "Data Trending and Analysis Tool Library"
+readme = "README.md"
+requires-python = ">=3.6"
+license = {text = "Unlicense"}
+authors = [
+  { name = "winner", email = "emily.winner@jpl.nasa.gov" },
+  { name = "muszynsk", email = "matt.muszynski@jpl.nasa.gov" },
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Unlicense",
+]
+dependencies = [
+    "nbformat>=4.2.0",
+    "plotly>=5.14",
+    "pytest",
+    "pandas>=2.0.0; python_version >= '3.9'", # For Python 3.9+, require Pandas 2 or higher
+    "pandas>=1.1.0; python_version < '3.9'", # For older Python, allow older Pandas (e.g., 1.x)
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/NASA-JPL-Teamtools-Studio/tts_dtat"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"
+
+[build-system]
+requires = ["setuptools", "wheel", "toml", "tts-utilities", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
