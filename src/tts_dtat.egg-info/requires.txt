@@ -1,0 +1,10 @@
+nbformat>=4.2.0
+plotly>=5.14
+pytest
+tts-utilities
+
+[:python_version < "3.9"]
+pandas>=1.1.0
+
+[:python_version >= "3.9"]
+pandas>=2.0.0

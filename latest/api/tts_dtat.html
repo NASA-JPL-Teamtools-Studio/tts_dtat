@@ -1,0 +1,988 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tts_dtat &mdash; tts-dtat 0.2.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/bugfix.css" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=d27f7911"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="tts_dtat.dataconnectors" href="tts_dtat.dataconnectors.html" />
+    <link rel="prev" title="tts-dtat" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            tts-dtat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">tts_dtat</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tts_dtat.dataconnectors.html">tts_dtat.dataconnectors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-tts_dtat.commonchartfuncs">tts_dtat.commonchartfuncs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.commonchartfuncs.elapsed_seconds_to_dt_str"><code class="docutils literal notranslate"><span class="pre">elapsed_seconds_to_dt_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.commonchartfuncs.get_plotly_marker_values"><code class="docutils literal notranslate"><span class="pre">get_plotly_marker_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.commonchartfuncs.make_colorbar_dict"><code class="docutils literal notranslate"><span class="pre">make_colorbar_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tts_dtat.datachecker">tts_dtat.datachecker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datachecker.find_value_header"><code class="docutils literal notranslate"><span class="pre">find_value_header()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datachecker.handle_mixed_time_formats"><code class="docutils literal notranslate"><span class="pre">handle_mixed_time_formats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datachecker.header"><code class="docutils literal notranslate"><span class="pre">header()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datachecker.is_time_type"><code class="docutils literal notranslate"><span class="pre">is_time_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datachecker.make_datetime_column"><code class="docutils literal notranslate"><span class="pre">make_datetime_column()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datachecker.min_header"><code class="docutils literal notranslate"><span class="pre">min_header()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datachecker.valid_time_type_cols"><code class="docutils literal notranslate"><span class="pre">valid_time_type_cols()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datachecker.valid_value_col_names"><code class="docutils literal notranslate"><span class="pre">valid_value_col_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datachecker.verify_header"><code class="docutils literal notranslate"><span class="pre">verify_header()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tts_dtat.datainterpolator">tts_dtat.datainterpolator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.datainterpolator.DefaultInterpolator"><code class="docutils literal notranslate"><span class="pre">DefaultInterpolator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tts_dtat.demo_data">tts_dtat.demo_data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.demo_data.drifting_off_nominal"><code class="docutils literal notranslate"><span class="pre">drifting_off_nominal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.demo_data.instrument_turn_on"><code class="docutils literal notranslate"><span class="pre">instrument_turn_on()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.demo_data.make_time_col"><code class="docutils literal notranslate"><span class="pre">make_time_col()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tts_dtat.dtatdata">tts_dtat.dtatdata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.column_values_from_state"><code class="docutils literal notranslate"><span class="pre">column_values_from_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.get_data_from_state"><code class="docutils literal notranslate"><span class="pre">get_data_from_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.get_data_from_states"><code class="docutils literal notranslate"><span class="pre">get_data_from_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.get_max_date"><code class="docutils literal notranslate"><span class="pre">get_max_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.get_min_date"><code class="docutils literal notranslate"><span class="pre">get_min_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.get_unit_from_state"><code class="docutils literal notranslate"><span class="pre">get_unit_from_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.get_units_from_states"><code class="docutils literal notranslate"><span class="pre">get_units_from_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.log_data"><code class="docutils literal notranslate"><span class="pre">log_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.make_doy_from_state"><code class="docutils literal notranslate"><span class="pre">make_doy_from_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.make_pd_cache_from_data"><code class="docutils literal notranslate"><span class="pre">make_pd_cache_from_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.print_data"><code class="docutils literal notranslate"><span class="pre">print_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.dtatdata.sort_by"><code class="docutils literal notranslate"><span class="pre">sort_by()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tts_dtat.mouseover_maker">tts_dtat.mouseover_maker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.mouseover_maker.default_hovertemplate"><code class="docutils literal notranslate"><span class="pre">default_hovertemplate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.mouseover_maker.ht_X_Y_Z_names"><code class="docutils literal notranslate"><span class="pre">ht_X_Y_Z_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.mouseover_maker.ht_X_Y_Z_time_names"><code class="docutils literal notranslate"><span class="pre">ht_X_Y_Z_time_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.mouseover_maker.make_meta"><code class="docutils literal notranslate"><span class="pre">make_meta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tts_dtat.palette">tts_dtat.palette</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.palette.clean_and_sort_colorscale"><code class="docutils literal notranslate"><span class="pre">clean_and_sort_colorscale()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.palette.get_default_color_options"><code class="docutils literal notranslate"><span class="pre">get_default_color_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.palette.get_default_colors"><code class="docutils literal notranslate"><span class="pre">get_default_colors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.palette.get_default_shape_options"><code class="docutils literal notranslate"><span class="pre">get_default_shape_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.palette.get_line_color"><code class="docutils literal notranslate"><span class="pre">get_line_color()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.palette.make_discrete_colorscale"><code class="docutils literal notranslate"><span class="pre">make_discrete_colorscale()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.palette.make_discrete_colorscale_from_data"><code class="docutils literal notranslate"><span class="pre">make_discrete_colorscale_from_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.palette.pop_next_color"><code class="docutils literal notranslate"><span class="pre">pop_next_color()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.palette.remove_unseen_bins"><code class="docutils literal notranslate"><span class="pre">remove_unseen_bins()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tts_dtat.plot">tts_dtat.plot</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.plot.make_bar_graph"><code class="docutils literal notranslate"><span class="pre">make_bar_graph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.plot.make_diff_graph"><code class="docutils literal notranslate"><span class="pre">make_diff_graph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.plot.make_stacked_graph"><code class="docutils literal notranslate"><span class="pre">make_stacked_graph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tts_dtat.types">tts_dtat.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.types.CustomizationOptions"><code class="docutils literal notranslate"><span class="pre">CustomizationOptions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.types.CustomizedMarker"><code class="docutils literal notranslate"><span class="pre">CustomizedMarker</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.types.CustomizedTrace"><code class="docutils literal notranslate"><span class="pre">CustomizedTrace</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tts_dtat.types.Line"><code class="docutils literal notranslate"><span class="pre">Line</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tts-dtat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">tts_dtat</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tts_dtat">
+<span id="tts-dtat"></span><h1>tts_dtat<a class="headerlink" href="#module-tts_dtat" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tts_dtat.dataconnectors.html">tts_dtat.dataconnectors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tts_dtat.dataconnectors.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tts_dtat.dataconnectors.html#module-tts_dtat.dataconnectors.csvconnector">tts_dtat.dataconnectors.csvconnector</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tts_dtat.dataconnectors.html#tts_dtat.dataconnectors.csvconnector.CSVConnector"><code class="docutils literal notranslate"><span class="pre">CSVConnector</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<section id="module-tts_dtat.commonchartfuncs">
+<span id="tts-dtat-commonchartfuncs"></span><h3>tts_dtat.commonchartfuncs<a class="headerlink" href="#module-tts_dtat.commonchartfuncs" title="Link to this heading"></a></h3>
+<p>Common functions for charts</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.commonchartfuncs.elapsed_seconds_to_dt_str">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.commonchartfuncs.</span></span><span class="sig-name descname"><span class="pre">elapsed_seconds_to_dt_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">es_flt</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#tts_dtat.commonchartfuncs.elapsed_seconds_to_dt_str" title="Link to this definition"></a></dt>
+<dd><p>Converts elapsed seconds since a reference epoch (2018-01-01) to a formatted string.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>es_flt (float): The number of seconds elapsed since January 1, 2018.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: A datetime string formatted as ‘%Y-%jT%H:%M:%S’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.commonchartfuncs.get_plotly_marker_values">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.commonchartfuncs.</span></span><span class="sig-name descname"><span class="pre">get_plotly_marker_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">customize_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#tts_dtat.types.CustomizedTrace" title="tts_dtat.types.CustomizedTrace"><span class="pre">CustomizedTrace</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tts_dtat.types.CustomizedMarker" title="tts_dtat.types.CustomizedMarker"><span class="pre">CustomizedMarker</span></a></span></span><a class="headerlink" href="#tts_dtat.commonchartfuncs.get_plotly_marker_values" title="Link to this definition"></a></dt>
+<dd><p>Extracts and defaults marker configuration values for a Plotly trace.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>customize_dict (CustomizedTrace): A dictionary containing customization options</dt><dd><p>for the trace, such as color, symbol, size, and colorscale.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>CustomizedMarker: A dictionary formatted for use as a Plotly marker configuration,</dt><dd><p>containing keys for size, symbol, color, colorscale, showscale, and line properties.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.commonchartfuncs.make_colorbar_dict">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.commonchartfuncs.</span></span><span class="sig-name descname"><span class="pre">make_colorbar_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#tts_dtat.commonchartfuncs.make_colorbar_dict" title="Link to this definition"></a></dt>
+<dd><p>Creates a dictionary defining the properties of a Plotly colorbar.</p>
+<p>Determines the appropriate tick values and text based on the data type of the
+Z-axis variable (time, discrete bins, or categorical strings).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame containing the data.
+z_var (str): The name of the column used for the Z-axis (color dimension).
+z_vals (str): The name of the column containing the numeric values for the Z-axis.
+color (list or str): The color configuration, which can be a list of bins or a single color.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A dictionary containing title, tickmode, tickvals, and ticktext for the colorbar.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tts_dtat.datachecker">
+<span id="tts-dtat-datachecker"></span><h3>tts_dtat.datachecker<a class="headerlink" href="#module-tts_dtat.datachecker" title="Link to this heading"></a></h3>
+<p>Utility functions for verifying and identifying data</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.datachecker.find_value_header">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.datachecker.</span></span><span class="sig-name descname"><span class="pre">find_value_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cols</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datachecker.find_value_header" title="Link to this definition"></a></dt>
+<dd><p>Returns the column name of the ‘value’ in the data, given the column names as a list</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.datachecker.handle_mixed_time_formats">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.datachecker.</span></span><span class="sig-name descname"><span class="pre">handle_mixed_time_formats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datachecker.handle_mixed_time_formats" title="Link to this definition"></a></dt>
+<dd><p>Tries to convert a string with subseconds first,
+if that fails, tries without subseconds,
+and otherwise returns an error if both fail</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.datachecker.header">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.datachecker.</span></span><span class="sig-name descname"><span class="pre">header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datachecker.header" title="Link to this definition"></a></dt>
+<dd><p>The datacache header</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.datachecker.is_time_type">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.datachecker.</span></span><span class="sig-name descname"><span class="pre">is_time_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datachecker.is_time_type" title="Link to this definition"></a></dt>
+<dd><p>Returns true if the state is a known time type</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.datachecker.make_datetime_column">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.datachecker.</span></span><span class="sig-name descname"><span class="pre">make_datetime_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datachecker.make_datetime_column" title="Link to this definition"></a></dt>
+<dd><p>Returns a transformed column of strings to datetime objects</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.datachecker.min_header">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.datachecker.</span></span><span class="sig-name descname"><span class="pre">min_header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datachecker.min_header" title="Link to this definition"></a></dt>
+<dd><p>The smallest valid header for imported information</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.datachecker.valid_time_type_cols">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.datachecker.</span></span><span class="sig-name descname"><span class="pre">valid_time_type_cols</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datachecker.valid_time_type_cols" title="Link to this definition"></a></dt>
+<dd><p>A list of all valid time type column names.
+This is the source of truth definition.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.datachecker.valid_value_col_names">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.datachecker.</span></span><span class="sig-name descname"><span class="pre">valid_value_col_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datachecker.valid_value_col_names" title="Link to this definition"></a></dt>
+<dd><p>A list of all valid generic ‘value’ column names.
+This is the source of truth definition.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.datachecker.verify_header">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.datachecker.</span></span><span class="sig-name descname"><span class="pre">verify_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datachecker.verify_header" title="Link to this definition"></a></dt>
+<dd><p>Verifies that the header of a dataframe has the necessary columns</p>
+</dd></dl>
+
+</section>
+<section id="module-tts_dtat.datainterpolator">
+<span id="tts-dtat-datainterpolator"></span><h3>tts_dtat.datainterpolator<a class="headerlink" href="#module-tts_dtat.datainterpolator" title="Link to this heading"></a></h3>
+<p>Helper functions to create additional numeric scales for figure traces</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tts_dtat.datainterpolator.DefaultInterpolator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">tts_dtat.datainterpolator.</span></span><span class="sig-name descname"><span class="pre">DefaultInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datainterpolator.DefaultInterpolator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Default interpolator logic module. See the documentation for details.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tts_dtat.datainterpolator.DefaultInterpolator.make_column_values">
+<span class="sig-name descname"><span class="pre">make_column_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elapsed_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datainterpolator.DefaultInterpolator.make_column_values" title="Link to this definition"></a></dt>
+<dd><p>Interpolate data as necessary (pad then backfill)
+to provide a continuous set of color values for the “z-axis” of a data set.
+This method assumes data has been sorted by the primary time type used for the graph.
+:keyword state: apidName to make into a column of numeric values to use as a colorscale
+:keyword time_in_seconds: return a time type as a series of seconds elapsed since 1/1/2018</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tts_dtat.datainterpolator.DefaultInterpolator.make_num_col_from_state">
+<span class="sig-name descname"><span class="pre">make_num_col_from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datainterpolator.DefaultInterpolator.make_num_col_from_state" title="Link to this definition"></a></dt>
+<dd><p>Make a new column of non-empty numeric types based on the data from state.
+Interpolate data as necessary (pad then backfill).
+:keyword state: apidName to make into a column of numeric values to use as a colorscale</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tts_dtat.datainterpolator.DefaultInterpolator.make_num_vals_from_strings">
+<span class="sig-name descname"><span class="pre">make_num_vals_from_strings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.datainterpolator.DefaultInterpolator.make_num_vals_from_strings" title="Link to this definition"></a></dt>
+<dd><p>Make a new column of non-empty numeric types from a column of string values.
+:keyword col: column of string values</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-tts_dtat.demo_data">
+<span id="tts-dtat-demo-data"></span><h3>tts_dtat.demo_data<a class="headerlink" href="#module-tts_dtat.demo_data" title="Link to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.demo_data.drifting_off_nominal">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.demo_data.</span></span><span class="sig-name descname"><span class="pre">drifting_off_nominal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.demo_data.drifting_off_nominal" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Simulates data for an instrument drifting off its nominal values.</dt><dd><p>Used for demo jupyter notebook, and has no operational purpose.</p>
+</dd>
+</dl>
+<p>Generates synthetic data for Voltage and Current that drifts over time,
+along with Mode state changes.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>pd.DataFrame: A DataFrame containing columns for ‘scet’ (time), ‘name’,</dt><dd><p>and ‘value’.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.demo_data.instrument_turn_on">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.demo_data.</span></span><span class="sig-name descname"><span class="pre">instrument_turn_on</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.demo_data.instrument_turn_on" title="Link to this definition"></a></dt>
+<dd><p>Simulates data for an instrument turning on. Used for demo jupyter notebook,
+and has no operational purpose.</p>
+<p>Generates synthetic data for Voltage, Current, and Mode states over time,
+simulating a startup sequence from TEST to INIT to OPERATIONAL.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>pd.DataFrame: A DataFrame containing columns for ‘scet’ (time), ‘name’, </dt><dd><p>‘value’, and ‘unit’.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.demo_data.make_time_col">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.demo_data.</span></span><span class="sig-name descname"><span class="pre">make_time_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.demo_data.make_time_col" title="Link to this definition"></a></dt>
+<dd><p>Generates a list of timestamps starting from the current time.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>length (int, optional): The number of minutes to generate timestamps for. </dt><dd><p>Defaults to 1000.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of pandas Timestamps with minute frequency.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tts_dtat.dtatdata">
+<span id="tts-dtat-dtatdata"></span><h3>tts_dtat.dtatdata<a class="headerlink" href="#module-tts_dtat.dtatdata" title="Link to this heading"></a></h3>
+<p>Datacache object functions for a cache for data from one or more sources</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.column_values_from_state">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">column_values_from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elapsed_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.column_values_from_state" title="Link to this definition"></a></dt>
+<dd><p>Makes a column of values for the given state.
+Returns the data and column name.</p>
+<dl>
+<dt>Args:</dt><dd><p>data (pd.DataFrame): DataFrame containing the data
+state (str): The state/column to process
+time (str, optional): The time column to sort by. Defaults to “scet”.
+elapsed_seconds (bool, optional): Whether to convert time to elapsed seconds.</p>
+<blockquote>
+<div><p>Defaults to False.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>tuple: A tuple containing (processed data, column name).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.get_data_from_state">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">get_data_from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.get_data_from_state" title="Link to this definition"></a></dt>
+<dd><p>Returns only the data for the given state.
+Does not modify the cache.
+Returns empty if state is invalid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame containing the data.
+state (str): The name of the state to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>pd.DataFrame: A subset of the data containing only rows for the specified state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.get_data_from_states">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">get_data_from_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_states</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.get_data_from_states" title="Link to this definition"></a></dt>
+<dd><p>Returns only data for the given list of states.
+Does not modify the cache.
+Returns empty if all states are invalid,
+otherwise skips invalid states.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame containing the data.
+filter_states (list): A list of state names to filter by.</p>
+</dd>
+<dt>Returns:</dt><dd><p>pd.DataFrame: A subset of the data containing only rows for the specified states.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.get_max_date">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">get_max_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.get_max_date" title="Link to this definition"></a></dt>
+<dd><p>Returns the maximum date of data in this cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame containing the data.</p>
+</dd>
+<dt>Returns:</dt><dd><p>datetime: The maximum datetime found in the ‘scet’ column, or None if empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.get_min_date">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">get_min_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.get_min_date" title="Link to this definition"></a></dt>
+<dd><p>Returns the minimum date of data in this cache.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame containing the data.</p>
+</dd>
+<dt>Returns:</dt><dd><p>datetime: The minimum datetime found in the ‘scet’ column, or None if empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.get_unit_from_state">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">get_unit_from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.get_unit_from_state" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the unit associated with a specific state.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame containing the data.
+state (str): The name of the state to find the unit for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: The unit string (e.g., ‘Time’, ‘volts’), or ‘Unknown’ if not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.get_units_from_states">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">get_units_from_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.get_units_from_states" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the units for a list of states or a single state.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame containing the data.
+states (Union[str, list]): A single state name or a list of state names.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Union[str, list]: A unit string if the input was a single state, </dt><dd><p>or a list of unit strings if the input was a list.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.log_data">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">log_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.log_data" title="Link to this definition"></a></dt>
+<dd><p>Log the current data as a debug message.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame to log.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.make_doy_from_state">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">make_doy_from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.make_doy_from_state" title="Link to this definition"></a></dt>
+<dd><p>Creates a ‘doy’ (Day of Year) formatted string column from a time state.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame containing the data.
+state (str): The name of the time column to convert.</p>
+</dd>
+<dt>Returns:</dt><dd><p>pd.DataFrame: The DataFrame with an added ‘doy’ column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.make_pd_cache_from_data">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">make_pd_cache_from_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_lists</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.make_pd_cache_from_data" title="Link to this definition"></a></dt>
+<dd><p>Creates a pandas DataFrame cache from a list of data sources.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data_lists (list): A list of JSON strings or objects containing data to be loaded.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>pd.DataFrame: A consolidated DataFrame containing data from all sources,</dt><dd><p>with standardized headers and datetime conversions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.print_data">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">print_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.print_data" title="Link to this definition"></a></dt>
+<dd><p>Print the current data to console.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame to print.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.dtatdata.sort_by">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.dtatdata.</span></span><span class="sig-name descname"><span class="pre">sort_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ascending</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.dtatdata.sort_by" title="Link to this definition"></a></dt>
+<dd><p>Sorts the data by the given column name.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The DataFrame to sort.
+col (str): The name of the column to sort by.
+ascending (bool, optional): Whether to sort in ascending order. Defaults to True.</p>
+</dd>
+<dt>Returns:</dt><dd><p>pd.DataFrame: The sorted DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tts_dtat.mouseover_maker">
+<span id="tts-dtat-mouseover-maker"></span><h3>tts_dtat.mouseover_maker<a class="headerlink" href="#module-tts_dtat.mouseover_maker" title="Link to this heading"></a></h3>
+<p>Functions to create a properly formatted hovertemplate string for plotly charts</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.mouseover_maker.default_hovertemplate">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.mouseover_maker.</span></span><span class="sig-name descname"><span class="pre">default_hovertemplate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.mouseover_maker.default_hovertemplate" title="Link to this definition"></a></dt>
+<dd><p>Return a hovertemplate string for a generic
+graph. This is the only hovertemplate method
+in this module that can used without setting meta
+to the output of make_meta()</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>str: A generic hovertemplate string displaying X and Y values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.mouseover_maker.ht_X_Y_Z_names">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.mouseover_maker.</span></span><span class="sig-name descname"><span class="pre">ht_X_Y_Z_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Z'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.mouseover_maker.ht_X_Y_Z_names" title="Link to this definition"></a></dt>
+<dd><p>Return a hovertemplate that uses the x and y
+axis names to label the values. The meta field
+should be set to the output of make_meta() for
+this hovertemplate to work properly.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>xaxis (str, optional): The label for the X-axis. Defaults to “X”.
+yaxis (str, optional): The label for the Y-axis. Defaults to “Y”.
+zaxis (str, optional): The label for the Z-axis (color). Defaults to “Z”.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: A formatted plotly hovertemplate string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.mouseover_maker.ht_X_Y_Z_time_names">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.mouseover_maker.</span></span><span class="sig-name descname"><span class="pre">ht_X_Y_Z_time_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Z'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.mouseover_maker.ht_X_Y_Z_time_names" title="Link to this definition"></a></dt>
+<dd><p>Return a hovertemplate that uses the x and y
+axis names to label the values. The meta field
+should be set to the output of make_meta() for
+this hovertemplate to work properly.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>xaxis (str, optional): The label for the X-axis. Defaults to “X”.
+yaxis (str, optional): The label for the Y-axis. Defaults to “Y”.
+zaxis (str, optional): The label for the Z-axis (color). Defaults to “Z”.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: A formatted plotly hovertemplate string that includes a dedicated Time field.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.mouseover_maker.make_meta">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.mouseover_maker.</span></span><span class="sig-name descname"><span class="pre">make_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.mouseover_maker.make_meta" title="Link to this definition"></a></dt>
+<dd><p>Returns the meta value for a chart which should
+be set to allow the Z and time values to be reflected
+in hovertext tooltips made by this module.
+This method should be run on the data and set to meta before
+using any of the below ‘ht’ hovertemplate methods in this module.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>zvar (str): The name of the column containing the Z-axis (color) data.</dt><dd><p>Can be None if no Z-axis is used.</p>
+</dd>
+<dt>data (pd.DataFrame): The pandas DataFrame containing the chart data,</dt><dd><p>including ‘scet’ and the zvar column.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list: A list of lists, where each inner list contains [z_value, scet_time]</dt><dd><p>corresponding to a row in the dataframe.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tts_dtat.palette">
+<span id="tts-dtat-palette"></span><h3>tts_dtat.palette<a class="headerlink" href="#module-tts_dtat.palette" title="Link to this heading"></a></h3>
+<p>Default color palette for charts</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.palette.clean_and_sort_colorscale">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.palette.</span></span><span class="sig-name descname"><span class="pre">clean_and_sort_colorscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_divisions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.palette.clean_and_sort_colorscale" title="Link to this definition"></a></dt>
+<dd><p>Cleans, sorts, and normalizes the colorscale bins based on data ranges.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>color_set (list): The list of colors.
+custom_divisions (list): The list of raw start values for the bins.
+data_min (float, optional): The minimum value of the dataset. Defaults to 0.
+data_max (float, optional): The maximum value of the dataset. Defaults to 1.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: A tuple containing the processed (color_set, custom_divisions) lists,</dt><dd><p>where divisions are normalized to 0-1.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.palette.get_default_color_options">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.palette.</span></span><span class="sig-name descname"><span class="pre">get_default_color_options</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.palette.get_default_color_options" title="Link to this definition"></a></dt>
+<dd><p>Creates properly formatted dropdown labels for the default color options.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list: A list of dictionaries, where each dictionary represents an option</dt><dd><p>containing ‘label’, ‘value’, ‘className’, and ‘title’.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.palette.get_default_colors">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.palette.</span></span><span class="sig-name descname"><span class="pre">get_default_colors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.palette.get_default_colors" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of the hex values with default colors</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list: A list of string hex color codes available in the default palette.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.palette.get_default_shape_options">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.palette.</span></span><span class="sig-name descname"><span class="pre">get_default_shape_options</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.palette.get_default_shape_options" title="Link to this definition"></a></dt>
+<dd><p>Creates properly formatted dropdown labels for the default shape options.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list: A list of dictionaries, where each dictionary represents a shape option</dt><dd><p>containing ‘label’, ‘value’, ‘className’, and ‘title’.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.palette.get_line_color">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.palette.</span></span><span class="sig-name descname"><span class="pre">get_line_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.palette.get_line_color" title="Link to this definition"></a></dt>
+<dd><p>Tries to return a related line color.
+If not found, returns the color again.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>color (str): The hex code of the fill color.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str: The hex code of the corresponding line color, or the original color</dt><dd><p>if no mapping is found.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.palette.make_discrete_colorscale">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.palette.</span></span><span class="sig-name descname"><span class="pre">make_discrete_colorscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_divisions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.palette.make_discrete_colorscale" title="Link to this definition"></a></dt>
+<dd><p>Creates a discrete Plotly colorscale based on specified colors and division points.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>color_set (list): A list of color codes.
+custom_divisions (list): A list of values where each color bin starts.
+data_min (float, optional): The minimum value in the data range. Defaults to 0.
+data_max (float, optional): The maximum value in the data range. Defaults to 1.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list: A list of tuples compatible with Plotly’s colorscale format, or “jet”</dt><dd><p>if no colors are provided.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.palette.make_discrete_colorscale_from_data">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.palette.</span></span><span class="sig-name descname"><span class="pre">make_discrete_colorscale_from_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_lower_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.palette.make_discrete_colorscale_from_data" title="Link to this definition"></a></dt>
+<dd><p>Generates a discrete colorscale by deriving min/max values directly from the data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>color_set (list): A list of color codes.
+bin_lower_bounds (list): A list of values where each color bin starts.
+color_data (pd.DataFrame): The dataframe containing the ‘value’ column to determine range.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A discrete Plotly colorscale.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.palette.pop_next_color">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.palette.</span></span><span class="sig-name descname"><span class="pre">pop_next_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unassigned_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tts_dtat.palette.pop_next_color" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the next available color from the unassigned list.
+If the list is empty or None, it resets with default colors.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>unassigned_colors (list, optional): The current list of available color hex codes.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple[str, list]: A tuple containing the popped color (str) and the</dt><dd><p>updated list of unassigned colors.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.palette.remove_unseen_bins">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.palette.</span></span><span class="sig-name descname"><span class="pre">remove_unseen_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_divisions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.palette.remove_unseen_bins" title="Link to this definition"></a></dt>
+<dd><p>Removes bins (colors and divisions) that fall outside the normalized 0-1 range.
+Ensures that the lowest remaining bin starts at 0.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>color_set (list): A list of colors assigned to bins.
+custom_divisions (list): A list of normalized starting points (0-1) for each bin.</p>
+</dd>
+<dt>Returns:</dt><dd><p>tuple: A tuple containing the filtered (color_set, custom_divisions).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tts_dtat.plot">
+<span id="tts-dtat-plot"></span><h3>tts_dtat.plot<a class="headerlink" href="#module-tts_dtat.plot" title="Link to this heading"></a></h3>
+<p>Plotly and other functions for a stacked plot graph</p>
+<p>This version makes an arrow for each event</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.plot.make_bar_graph">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.plot.</span></span><span class="sig-name descname"><span class="pre">make_bar_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_axis_units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unassigned_colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#fcfcfc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_line_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#555555'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_margins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#005500'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.plot.make_bar_graph" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.plot.make_diff_graph">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.plot.</span></span><span class="sig-name descname"><span class="pre">make_diff_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_axis_units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unassigned_colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#fcfcfc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_line_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#555555'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_margins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.plot.make_diff_graph" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tts_dtat.plot.make_stacked_graph">
+<span class="sig-prename descclassname"><span class="pre">tts_dtat.plot.</span></span><span class="sig-name descname"><span class="pre">make_stacked_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_vars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_axis_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customize_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#tts_dtat.types.CustomizationOptions" title="tts_dtat.types.CustomizationOptions"><span class="pre">CustomizationOptions</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unassigned_colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#fcfcfc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_line_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#555555'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_margins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_y_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tts_dtat.plot.make_stacked_graph" title="Link to this definition"></a></dt>
+<dd><p>Creates a stacked graph with multiple subplots using Plotly.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (pd.DataFrame): The pandas DataFrame containing the data to plot.
+y_vars (Sequence[Sequence[str]]): A list of lists of variable names to plot.
+x_var (str, optional): The name of the column to use for the X-axis. Defaults to “scet”.
+z_var (Optional[str], optional): The name of the column to use for the Z-axis (color scale).
+multi_axis (bool, optional): If True, creates multiple Y-axes for traces within the same subplot.
+plot_lines (bool, optional): If True, plots lines and markers. If False, plots markers only.
+figure_title (str, optional): The title of the figure.
+y_axis_title (Union[str, List[str]], optional): The title(s) for the Y-axis. Can be a single string (applied to all or used globally), or a list of strings (one per subplot).
+customize_dict (Optional[CustomizationOptions], optional): Customization options for specific traces.
+unassigned_colors (Optional[List], optional): A list of colors to use for traces without assignments.
+background_color (str, optional): The background color of the plot.
+axis_line_color (str, optional): The color of the axis lines.
+figure_margins (dict, optional): Margins for the figure (l, r, t, b).
+figure_height (int, optional): The height of the figure in pixels.
+figure_width (int, optional): The width of the figure in pixels.
+events (Dict[str, List[Tuple]], optional): A dictionary of events to annotate.
+event_line (bool, optional): If True, draws a vertical line at the event time.
+doy (bool, optional): If True and x_var is a time type, formats the X-axis ticks using dates.
+global_y_label (bool, optional): If True, treats y_axis_title as a single label for the whole figure.</p>
+</dd>
+<dt>Returns:</dt><dd><p>tuple: (graph, unassigned_colors, marker_values, visible_traces)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tts_dtat.types">
+<span id="tts-dtat-types"></span><h3>tts_dtat.types<a class="headerlink" href="#module-tts_dtat.types" title="Link to this heading"></a></h3>
+<p>Module containing type definitions</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizationOptions">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">tts_dtat.types.</span></span><span class="sig-name descname"><span class="pre">CustomizationOptions</span></span><a class="headerlink" href="#tts_dtat.types.CustomizationOptions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#tts_dtat.types.CustomizedTrace" title="tts_dtat.types.CustomizedTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">CustomizedTrace</span></code></a>]</p>
+<p>A mutable mapping that associates trace names (str) with their corresponding
+CustomizedTrace configuration dictionaries.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedMarker">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">tts_dtat.types.</span></span><span class="sig-name descname"><span class="pre">CustomizedMarker</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedMarker" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>Defines the properties of a marker in a plot.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>size (int): The size of the marker.
+symbol (str): The shape of the marker (e.g., ‘circle’).
+color (str): The color of the marker.
+colorscale (str): The color scale applied to the marker.
+showscale (bool): Whether to show the color scale associated with the marker.
+line (Line): The outline properties of the marker.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedMarker.color">
+<span class="sig-name descname"><span class="pre">color</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedMarker.color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedMarker.colorscale">
+<span class="sig-name descname"><span class="pre">colorscale</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedMarker.colorscale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedMarker.line">
+<span class="sig-name descname"><span class="pre">line</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#tts_dtat.types.Line" title="tts_dtat.types.Line"><span class="pre">Line</span></a></span><a class="headerlink" href="#tts_dtat.types.CustomizedMarker.line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedMarker.showscale">
+<span class="sig-name descname"><span class="pre">showscale</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedMarker.showscale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedMarker.size">
+<span class="sig-name descname"><span class="pre">size</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedMarker.size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedMarker.symbol">
+<span class="sig-name descname"><span class="pre">symbol</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedMarker.symbol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">tts_dtat.types.</span></span><span class="sig-name descname"><span class="pre">CustomizedTrace</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>Defines customization options for a specific trace in a plot.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>size (int): The size of the markers in the trace.
+symbol (str): The symbol used for markers (e.g., ‘circle’, ‘square’).
+color (str): The color of the markers or line.
+colorscale (str): The name of the color scale to use (e.g., ‘Viridis’).
+showscale (bool): Whether to display the color scale bar.
+line (Line): A dictionary defining the properties of the trace’s line.
+z_var (Optional[str]): The name of the variable determining the Z-axis or color dimension.
+mode (str): The drawing mode for the trace (e.g., ‘lines’, ‘markers’, ‘lines+markers’).
+marker_line_width (float): Specific width for the marker border/stroke. Overrides line[‘width’] for markers.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace.color">
+<span class="sig-name descname"><span class="pre">color</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace.color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace.colorscale">
+<span class="sig-name descname"><span class="pre">colorscale</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace.colorscale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace.line">
+<span class="sig-name descname"><span class="pre">line</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#tts_dtat.types.Line" title="tts_dtat.types.Line"><span class="pre">Line</span></a></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace.line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace.marker_line_width">
+<span class="sig-name descname"><span class="pre">marker_line_width</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace.marker_line_width" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace.mode">
+<span class="sig-name descname"><span class="pre">mode</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace.mode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace.showscale">
+<span class="sig-name descname"><span class="pre">showscale</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace.showscale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace.size">
+<span class="sig-name descname"><span class="pre">size</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace.size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace.symbol">
+<span class="sig-name descname"><span class="pre">symbol</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace.symbol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.CustomizedTrace.z_var">
+<span class="sig-name descname"><span class="pre">z_var</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#tts_dtat.types.CustomizedTrace.z_var" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tts_dtat.types.Line">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">tts_dtat.types.</span></span><span class="sig-name descname"><span class="pre">Line</span></span><a class="headerlink" href="#tts_dtat.types.Line" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>Defines the properties of a line in a plot.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>width (float): The width of the line in pixels.
+color (str): The color of the line (hex code or name).
+shape (Optional[str]): The shape of the line (e.g., ‘linear’, ‘hv’, ‘vh’, ‘spline’).</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.Line.color">
+<span class="sig-name descname"><span class="pre">color</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#tts_dtat.types.Line.color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.Line.shape">
+<span class="sig-name descname"><span class="pre">shape</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#tts_dtat.types.Line.shape" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tts_dtat.types.Line.width">
+<span class="sig-name descname"><span class="pre">width</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#tts_dtat.types.Line.width" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="tts-dtat" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tts_dtat.dataconnectors.html" class="btn btn-neutral float-right" title="tts_dtat.dataconnectors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026 JPL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
