@@ -18,6 +18,7 @@ dependencies = [
     "pytest",
     "pandas>=2.0.0; python_version >= '3.9'", # For Python 3.9+, require Pandas 2 or higher
     "pandas>=1.1.0; python_version < '3.9'", # For older Python, allow older Pandas (e.g., 1.x)
+    "tts-utilities"
 ]
 dynamic = ["version"]
 
