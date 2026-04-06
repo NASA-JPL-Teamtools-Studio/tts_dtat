@@ -3,14 +3,14 @@ name = "tts-dtat"
 description = "Data Trending and Analysis Tool Library"
 readme = "README.md"
 requires-python = ">=3.6"
-license = {text = "Unlicense"}
+license = {text = "Apache-2.0"}
 authors = [
   { name = "winner", email = "emily.winner@jpl.nasa.gov" },
   { name = "muszynsk", email = "matt.muszynski@jpl.nasa.gov" },
 ]
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: Unlicense",
+  "License :: OSI Approved :: Apache Software License",
 ]
 dependencies = [
     "nbformat>=4.2.0",
