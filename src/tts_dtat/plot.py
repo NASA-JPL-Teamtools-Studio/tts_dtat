@@ -41,6 +41,7 @@ def make_stacked_graph(
     event_line: bool = None,
     doy: bool = True,
     global_y_label: bool = False,
+    xaxis_showticklabels: bool = False,
 ):
     """
     Creates a stacked graph with multiple subplots using Plotly.
@@ -261,7 +262,7 @@ def make_stacked_graph(
                         }
                     }
                 )
-
+                
                 # --- START: Handle Overrides for Trace Mode and Line Shape ---
                 trace_customs = customize_dict.get(y_val, {}) if customize_dict else {}
                 trace_mode = trace_customs.get("mode", line_mode)
@@ -347,7 +348,8 @@ def make_stacked_graph(
             gridcolor=axis_line_color,
             zerolinecolor=axis_line_color,
             linecolor=axis_line_color,
-            linewidth=3
+            linewidth=3,
+            showticklabels=xaxis_showticklabels
         )
         if doy and datachecker.is_time_type(x_var):
             graph.update_xaxes(
