@@ -42,6 +42,7 @@ def make_stacked_graph(
     doy: bool = True,
     global_y_label: bool = False,
     xaxis_showticklabels: bool = False,
+    max_points: Optional[int] = None,
 ):
     """
     Creates a stacked graph with multiple subplots using Plotly.
@@ -66,10 +67,16 @@ def make_stacked_graph(
         event_line (bool, optional): If True, draws a vertical line at the event time.
         doy (bool, optional): If True and x_var is a time type, formats the X-axis ticks using dates.
         global_y_label (bool, optional): If True, treats y_axis_title as a single label for the whole figure.
+        max_points (Optional[int], optional): When set, each trace is downsampled to at
+            most this many points using LTTB before plotting. ``None`` disables downsampling.
 
     Returns:
         tuple: (graph, unassigned_colors, marker_values, visible_traces)
     """
+    if max_points is not None:
+        from tts_dtat.downsample import downsample as _downsample
+        data = _downsample(data, max_points, x_col=x_var)
+
     graph = go.Figure()
     graph.update_layout(
         plot_bgcolor=background_color,
