@@ -268,16 +268,20 @@ class PlotOrchestrator:
         _x_times = pd.to_datetime(self._data[self._x_var], errors="coerce")
         _updating = [False]
 
-        def _on_xrange_change(layout, x_range):
+        def _on_layout_change(layout, autorange, x_range):
             if _updating[0]:
                 return
             _updating[0] = True
             try:
-                self._apply_xrange(fw, x_range, _x_times)
+                if autorange:
+                    # Home button — restore full dataset view
+                    self._apply_xrange(fw, None, _x_times)
+                else:
+                    self._apply_xrange(fw, x_range, _x_times)
             finally:
                 _updating[0] = False
 
-        fw.layout.on_change(_on_xrange_change, "xaxis.range")
+        fw.layout.on_change(_on_layout_change, "xaxis.autorange", "xaxis.range")
         return fw
 
     def _apply_xrange(

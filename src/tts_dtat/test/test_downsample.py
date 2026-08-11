@@ -295,6 +295,25 @@ class TestPlotOrchestratorInteractive:
         after = [len(t.x) for t in fw.data]
         assert before == after
 
+    def test_home_button_restores_full_view(self, orchestrator_df):
+        """Simulates home-button (autorange=True): full dataset must be restored."""
+        orch = PlotOrchestrator(orchestrator_df, [["A"], ["B"]], n_points=50)
+        fw = go.FigureWidget(orch.plot())
+
+        # Zoom into a 5% window (≈30 rows per trace < n_points=50, no LTTB applied)
+        times = pd.to_datetime(orchestrator_df["scet"])
+        t_min, t_max = times.min(), times.max()
+        span = t_max - t_min
+        orch._apply_xrange(fw, [str(t_min + span * 0.475), str(t_min + span * 0.525)])
+        zoomed_len = len(fw.data[0].x)
+
+        # Simulate home button (autorange → True) via _apply_xrange(None)
+        orch._apply_xrange(fw, None)
+        restored_len = len(fw.data[0].x)
+
+        assert restored_len > zoomed_len
+        assert restored_len <= 50
+
     def test_import_without_ipywidgets_does_not_fail_at_module_level(self):
         """Importing the module must not raise even if ipywidgets is absent."""
         import importlib
