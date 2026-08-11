@@ -206,13 +206,97 @@ class TestPlotOrchestrator:
         fig = orch.plot()
         assert len(fig.data) == 2
 
-    def test_interactive_raises_not_implemented(self, orchestrator_df):
-        orch = PlotOrchestrator(orchestrator_df, [["A"]])
-        with pytest.raises(NotImplementedError):
-            orch.interactive()
-
     def test_repr(self, orchestrator_df):
         orch = PlotOrchestrator(orchestrator_df, [["A"], ["B"]], n_points=200)
         r = repr(orch)
         assert "PlotOrchestrator" in r
         assert "200" in r
+
+
+# ---------------------------------------------------------------------------
+# T5 — PlotOrchestrator.interactive() and _apply_xrange()
+# ---------------------------------------------------------------------------
+
+class TestPlotOrchestratorInteractive:
+    def test_interactive_returns_figure_widget(self, orchestrator_df):
+        fw = PlotOrchestrator(
+            orchestrator_df, [["A"], ["B"]], n_points=100
+        ).interactive()
+        assert isinstance(fw, go.FigureWidget)
+
+    def test_interactive_trace_count(self, orchestrator_df):
+        fw = PlotOrchestrator(
+            orchestrator_df, [["A"], ["B"]], n_points=100
+        ).interactive()
+        assert len(fw.data) == 2
+
+    def test_interactive_initial_traces_capped(self, orchestrator_df):
+        """Initial render via .interactive() respects n_points."""
+        fw = PlotOrchestrator(
+            orchestrator_df, [["A"], ["B"]], n_points=50
+        ).interactive()
+        for trace in fw.data:
+            assert len(trace.x) <= 50
+
+    def test_apply_xrange_zoom_reduces_point_count(self, orchestrator_df):
+        """Zooming to a small sub-range yields fewer points than the full view.
+
+        The fixture has 600 rows per trace over 10 minutes.  Zooming to the
+        middle 10% (≈60 rows) is well below the n_points cap of 300, so LTTB
+        is skipped and the trace length drops unambiguously.
+        """
+        orch = PlotOrchestrator(orchestrator_df, [["A"], ["B"]], n_points=300)
+        fw = go.FigureWidget(orch.plot())
+        full_len = len(fw.data[0].x)
+
+        times = pd.to_datetime(orchestrator_df["scet"])
+        t_min, t_max = times.min(), times.max()
+        span = t_max - t_min
+        t0 = t_min + span * 0.45
+        t1 = t_min + span * 0.55
+        orch._apply_xrange(fw, [str(t0), str(t1)])
+
+        assert len(fw.data[0].x) < full_len
+
+    def test_apply_xrange_none_restores_full_view(self, orchestrator_df):
+        """Passing None (reset zoom) restores the full downsampled dataset."""
+        orch = PlotOrchestrator(orchestrator_df, [["A"], ["B"]], n_points=50)
+        fw = go.FigureWidget(orch.plot())
+
+        times = pd.to_datetime(orchestrator_df["scet"])
+        t_min, t_max = times.min(), times.max()
+        quarter = (t_max - t_min) / 4
+        orch._apply_xrange(fw, [str(t_min + quarter), str(t_max - quarter)])
+        zoomed_len = len(fw.data[0].x)
+
+        orch._apply_xrange(fw, None)
+        reset_len = len(fw.data[0].x)
+
+        assert reset_len >= zoomed_len
+
+    def test_apply_xrange_respects_n_points_cap(self, orchestrator_df):
+        """After reset zoom, traces are still capped at n_points."""
+        orch = PlotOrchestrator(orchestrator_df, [["A"], ["B"]], n_points=30)
+        fw = go.FigureWidget(orch.plot())
+        orch._apply_xrange(fw, None)
+        for trace in fw.data:
+            assert len(trace.x) <= 30
+
+    def test_apply_xrange_empty_window_leaves_traces_unchanged(self, orchestrator_df):
+        """A range that contains no data must not clear existing traces."""
+        orch = PlotOrchestrator(orchestrator_df, [["A"], ["B"]], n_points=100)
+        fw = go.FigureWidget(orch.plot())
+        before = [len(t.x) for t in fw.data]
+
+        far_future = "2099-01-01"
+        far_future2 = "2099-01-02"
+        orch._apply_xrange(fw, [far_future, far_future2])
+
+        after = [len(t.x) for t in fw.data]
+        assert before == after
+
+    def test_import_without_ipywidgets_does_not_fail_at_module_level(self):
+        """Importing the module must not raise even if ipywidgets is absent."""
+        import importlib
+        import tts_dtat.downsample
+        importlib.reload(tts_dtat.downsample)  # re-importing should be safe
