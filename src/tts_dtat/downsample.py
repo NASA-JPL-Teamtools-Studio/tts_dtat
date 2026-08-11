@@ -21,7 +21,46 @@ from typing import Any, Dict, Optional, Sequence, Tuple
 import numpy as np
 import pandas as pd
 
-import lttb as _lttb
+
+def _lttb(data: "np.ndarray", n_out: int) -> "np.ndarray":
+    """Pure-NumPy Largest-Triangle-Three-Buckets (LTTB) implementation.
+
+    Args:
+        data: Shape ``(N, 2)`` array where column 0 is x and column 1 is y.
+        n_out: Number of output points.  Must satisfy ``2 <= n_out < N``.
+
+    Returns:
+        Shape ``(n_out, 2)`` array — a subset of the original points.
+    """
+    n = len(data)
+    sampled = np.empty((n_out, 2))
+    sampled[0] = data[0]
+    sampled[-1] = data[-1]
+
+    every = (n - 2) / (n_out - 2)
+    a = 0
+
+    for i in range(n_out - 2):
+        avg_start = int((i + 1) * every) + 1
+        avg_end   = min(int((i + 2) * every) + 1, n)
+        avg_x = data[avg_start:avg_end, 0].mean()
+        avg_y = data[avg_start:avg_end, 1].mean()
+
+        bkt_start = int(i * every) + 1
+        bkt_end   = min(int((i + 1) * every) + 1, n)
+
+        bx = data[bkt_start:bkt_end, 0]
+        by = data[bkt_start:bkt_end, 1]
+        areas = np.abs(
+            data[a, 0] * (by - avg_y)
+            + bx       * (avg_y - data[a, 1])
+            + avg_x    * (data[a, 1] - by)
+        )
+        a = int(np.argmax(areas)) + bkt_start
+        sampled[i + 1] = data[a]
+
+    return sampled
+
 
 
 # ---------------------------------------------------------------------------
@@ -49,7 +88,7 @@ def downsample_series(
     if len(x) <= n_points:
         return x, y
     data = np.column_stack([x, y])
-    result = _lttb.downsample(data, n_points)
+    result = _lttb(data, n_points)
     return result[:, 0], result[:, 1]
 
 
