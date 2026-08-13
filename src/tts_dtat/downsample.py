@@ -285,6 +285,8 @@ class PlotOrchestrator:
             )
 
         fig = self.plot()
+        # Set figure width to full notebook width and height to match static plot
+        fig.update_layout(width=None, height=800)
         fw = go.FigureWidget(fig)
 
         _x_times = _parse_times(self._data[self._x_var])
@@ -296,23 +298,17 @@ class PlotOrchestrator:
                 f"Check that timestamps are properly parsed."
             )
         _updating = [False]
-        _prev_autorange = [None]  # track state to skip spurious True→True repeats
 
         def _on_layout_change(layout, autorange, x_range):
             if _updating[0]:
                 return
-            # Skip redundant home callbacks (batch_update triggers a secondary
-            # layout event; guard against processing it as a genuine home click).
-            if autorange and _prev_autorange[0] is True:
-                return
-            # Validate x_range before using it
+            # Validate x_range before using it (only for zoom, not home)
             if not autorange:
                 if not isinstance(x_range, (list, tuple)) or len(x_range) < 2:
                     return
                 if x_range[0] is None or x_range[1] is None:
                     return
             _updating[0] = True
-            _prev_autorange[0] = bool(autorange)
             try:
                 if autorange:
                     # Home button — restore full dataset view
