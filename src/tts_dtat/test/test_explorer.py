@@ -422,3 +422,108 @@ class TestRemoveSubplot:
         ex._on_add(None)
         ex._mode_toggle.value = "Stack"
         assert ex._remove_subplot_btn.disabled
+
+
+# ---------------------------------------------------------------------------
+# T9 — LogExplorer
+# ---------------------------------------------------------------------------
+
+from tts_dtat.explorer import LogExplorer
+from tts_data_utils.core.log import TtsLogFrame, TtsLogRowSeries
+import ipywidgets as widgets
+
+
+_SAMPLE_ROWS = [
+    {'scet': '2024-001T00:00:00', 'name': 'SEQ_LOAD',  'level': 'ACTIVITY_LO', 'message': 'Loading cmds'},
+    {'scet': '2024-001T00:01:00', 'name': 'CRC_FAIL',  'level': 'WARNING_HI',  'message': 'CRC mismatch block 5'},
+    {'scet': '2024-001T00:02:00', 'name': 'SAFE_MODE', 'level': 'FATAL',       'message': 'Entering safe mode'},
+    {'scet': '2024-001T00:03:00', 'name': 'DIAG',      'level': 'DIAGNOSTIC',  'message': 'Boot OK'},
+]
+
+
+class _TestLogFrame(TtsLogFrame):
+    DEFAULT_TIME_LABEL = 'scet'
+    LEVELS = ['DIAGNOSTIC', 'ACTIVITY_LO', 'WARNING_HI', 'FATAL']
+    FILTER_COLS = {
+        'level': ['DIAGNOSTIC', 'ACTIVITY_LO', 'WARNING_HI', 'FATAL'],
+        'name': None,
+    }
+
+
+class TestLogExplorerWidgets:
+    def test_enumerated_filter_col_creates_select_multiple(self):
+        ex = LogExplorer(_TestLogFrame)
+        assert isinstance(ex._filter_widgets['level'], widgets.SelectMultiple)
+
+    def test_none_filter_col_creates_text_input(self):
+        ex = LogExplorer(_TestLogFrame)
+        assert isinstance(ex._filter_widgets['name'], widgets.Text)
+
+    def test_no_query_fn_hides_time_inputs(self):
+        ex = LogExplorer(_TestLogFrame)
+        assert ex._begin_input is None
+        assert ex._end_input is None
+
+    def test_query_fn_shows_time_inputs(self):
+        ex = LogExplorer(_TestLogFrame, query_fn=lambda t0, t1: _TestLogFrame())
+        assert ex._begin_input is not None
+        assert ex._end_input is not None
+
+    def test_frame_rendered_immediately_when_passed(self):
+        frame = _TestLogFrame(_SAMPLE_ROWS)
+        ex = LogExplorer(_TestLogFrame, frame=frame)
+        assert ex._loaded_frame is frame
+
+
+class TestLogExplorerFiltering:
+    def setup_method(self):
+        self.frame = _TestLogFrame(_SAMPLE_ROWS)
+
+    def test_level_filter_restricts_rows(self):
+        ex = LogExplorer(_TestLogFrame, frame=self.frame)
+        ex._filter_widgets['level'].value = ('FATAL',)
+        result = ex._apply_filters(self.frame)
+        assert len(result) == 1
+        assert result.iloc[0]['name'] == 'SAFE_MODE'
+
+    def test_name_text_filter_case_insensitive(self):
+        ex = LogExplorer(_TestLogFrame, frame=self.frame)
+        ex._filter_widgets['name'].value = 'crc'
+        result = ex._apply_filters(self.frame)
+        assert len(result) == 1
+        assert result.iloc[0]['name'] == 'CRC_FAIL'
+
+    def test_search_box_applies_regex(self):
+        ex = LogExplorer(_TestLogFrame, frame=self.frame)
+        ex._search_input.value = r'block \d+'
+        result = ex._apply_filters(self.frame)
+        assert len(result) == 1
+
+    def test_empty_filters_return_all_rows(self):
+        ex = LogExplorer(_TestLogFrame, frame=self.frame)
+        result = ex._apply_filters(self.frame)
+        assert len(result) == len(_SAMPLE_ROWS)
+
+    def test_clear_filters_resets_to_all(self):
+        ex = LogExplorer(_TestLogFrame, frame=self.frame)
+        ex._filter_widgets['level'].value = ('FATAL',)
+        ex._on_clear_filters(None)
+        assert list(ex._filter_widgets['level'].value) == []
+
+    def test_no_match_renders_message(self):
+        ex = LogExplorer(_TestLogFrame, frame=self.frame)
+        ex._filter_widgets['level'].value = ('FATAL',)
+        ex._search_input.value = 'no_such_string_xyz'
+        ex._on_apply(None)
+
+    def test_load_without_times_prints_error(self):
+        ex = LogExplorer(_TestLogFrame, query_fn=lambda t0, t1: _TestLogFrame())
+        ex._begin_input.value = ''
+        ex._end_input.value = ''
+        ex._on_load(None)
+
+    def test_load_with_bad_time_prints_error(self):
+        ex = LogExplorer(_TestLogFrame, query_fn=lambda t0, t1: _TestLogFrame())
+        ex._begin_input.value = 'not-a-time'
+        ex._end_input.value = '2024-001T01:00:00'
+        ex._on_load(None)
