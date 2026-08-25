@@ -289,6 +289,10 @@ class PlotOrchestrator:
         # ~700px default, and use a shorter height than the static plot.
         fig.update_layout(autosize=True, width=None, height=450)
         fw = go.FigureWidget(fig)
+        # autosize alone only recomputes width on a relayout/resize event
+        # (e.g. the first pan/zoom); responsive mode attaches a
+        # ResizeObserver so the initial render is already full-width.
+        fw._config = {"responsive": True}
 
         _x_times = _parse_times(self._data[self._x_var])
         if _x_times.isna().all():
