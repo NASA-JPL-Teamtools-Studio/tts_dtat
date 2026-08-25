@@ -289,10 +289,18 @@ class PlotOrchestrator:
         # ~700px default, and use a shorter height than the static plot.
         fig.update_layout(autosize=True, width=None, height=450)
         fw = go.FigureWidget(fig)
-        # autosize alone only recomputes width on a relayout/resize event
-        # (e.g. the first pan/zoom); responsive mode attaches a
-        # ResizeObserver so the initial render is already full-width.
-        fw._config = {"responsive": True}
+
+        # autosize=True only recomputes width on a relayout event (e.g. the
+        # first pan/zoom). At initial mount time the widget's container may
+        # not have finished flexbox layout yet, so Plotly.js measures a
+        # stale/default width. Force one relayout ourselves once the widget
+        # view is actually attached to the DOM (on_displayed fires after
+        # mount, unlike code run immediately in Python).
+        def _force_resize(_widget: Any) -> None:
+            fw.layout.autosize = False
+            fw.layout.autosize = True
+
+        fw.on_displayed(_force_resize)
 
         _x_times = _parse_times(self._data[self._x_var])
         if _x_times.isna().all():
