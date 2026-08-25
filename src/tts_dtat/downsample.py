@@ -285,8 +285,9 @@ class PlotOrchestrator:
             )
 
         fig = self.plot()
-        # Set figure width to full notebook width and height to match static plot
-        fig.update_layout(width=None, height=800)
+        # Autosize to the notebook's available width instead of plotly's
+        # ~700px default, and use a shorter height than the static plot.
+        fig.update_layout(autosize=True, width=None, height=450)
         fw = go.FigureWidget(fig)
 
         _x_times = _parse_times(self._data[self._x_var])
