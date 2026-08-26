@@ -295,14 +295,26 @@ class PlotOrchestrator:
         # width it saw at initial mount time.
         fw._config = {"responsive": True}
 
-        _x_times = _parse_times(self._data[self._x_var])
-        if _x_times.isna().all():
-            import warnings
-            warnings.warn(
-                f"interactive(): all timestamps in '{self._x_var}' are NaT. "
-                f"Zoom callbacks will not work correctly. "
-                f"Check that timestamps are properly parsed."
-            )
+        # Parsing every timestamp in the full (non-downsampled) dataset is
+        # the most expensive part of setting up interactivity — defer it
+        # until the first zoom/pan callback actually needs it instead of
+        # paying that cost on every .interactive() call, including views
+        # the user never zooms.
+        _x_times_cache: List[Optional[pd.Series]] = [None]
+
+        def _get_x_times() -> pd.Series:
+            if _x_times_cache[0] is None:
+                x_times = _parse_times(self._data[self._x_var])
+                if x_times.isna().all():
+                    import warnings
+                    warnings.warn(
+                        f"interactive(): all timestamps in '{self._x_var}' are NaT. "
+                        f"Zoom callbacks will not work correctly. "
+                        f"Check that timestamps are properly parsed."
+                    )
+                _x_times_cache[0] = x_times
+            return _x_times_cache[0]
+
         _updating = [False]
 
         def _on_layout_change(layout, autorange, x_range):
@@ -316,11 +328,12 @@ class PlotOrchestrator:
                     return
             _updating[0] = True
             try:
+                x_times = _get_x_times()
                 if autorange:
                     # Home button — restore full dataset view
-                    self._apply_xrange(fw, None, _x_times)
+                    self._apply_xrange(fw, None, x_times)
                 else:
-                    self._apply_xrange(fw, x_range, _x_times)
+                    self._apply_xrange(fw, x_range, x_times)
             except Exception as exc:  # prevent silent callback death
                 import warnings
                 warnings.warn(f"PlotOrchestrator._on_layout_change: {exc}")
@@ -328,6 +341,24 @@ class PlotOrchestrator:
                 _updating[0] = False
 
         fw.layout.on_change(_on_layout_change, "xaxis.autorange", "xaxis.range")
+
+        # FigureWidget measures its container's width at initial mount time,
+        # which can race ahead of the surrounding DOM/flexbox layout
+        # settling (esp. inside a Jupyter Output widget) — the widget then
+        # renders at a stale (often ~half) width until the user first
+        # resizes or interacts with it. Dispatching a resize event shortly
+        # after display forces Plotly.js to re-measure once the DOM has
+        # caught up, so it loads at full width immediately.
+        try:
+            from IPython.display import Javascript, display as _ipy_display_js
+            _ipy_display_js(Javascript(
+                "setTimeout(function () {"
+                "window.dispatchEvent(new Event('resize'));"
+                "}, 250);"
+            ))
+        except ImportError:
+            pass
+
         return fw
 
     def _apply_xrange(
