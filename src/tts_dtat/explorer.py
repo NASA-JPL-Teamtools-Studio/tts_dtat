@@ -570,18 +570,9 @@ class ChannelExplorer:
                 from tts_dtat.plot import make_stacked_graph
                 fig, *_ = make_stacked_graph(data, y_vars, x_var=x_var)
             _ipy_display(fig)
-            if self._n_points is not None:
-                # FigureWidget measures its container's width at initial
-                # mount time, which can race ahead of the surrounding
-                # flexbox layout settling (esp. inside an Output widget).
-                # Dispatching a resize event shortly after display forces
-                # Plotly.js to re-measure once the DOM has caught up.
-                from IPython.display import Javascript, display as _ipy_display_js
-                _ipy_display_js(Javascript(
-                    "setTimeout(function () {"
-                    "window.dispatchEvent(new Event('resize'));"
-                    "}, 250);"
-                ))
+            # Note: PlotOrchestrator.interactive() already dispatches its own
+            # delayed resize event to fix the initial-mount stale-width
+            # issue, so no extra handling is needed here.
 
     def _on_remove_subplot(self, _: Any) -> None:
         """Pop the last selected channel in Stack mode (T8)."""
