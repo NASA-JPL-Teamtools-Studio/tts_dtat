@@ -101,7 +101,7 @@ def get_data_from_state(data, state):
     Returns:
         pd.DataFrame: A subset of the data containing only rows for the specified state.
     """
-    if state in data.name.unique():
+    if state in data["name"].unique():
         return data[data["name"] == state]
     else:
         return pd.DataFrame(columns=datachecker.header())
@@ -121,7 +121,7 @@ def get_data_from_states(data, filter_states):
         pd.DataFrame: A subset of the data containing only rows for the specified states.
     """
     if set(filter_states):
-        return data.loc[data.name.isin(filter_states)]
+        return data.loc[data["name"].isin(filter_states)]
     return pd.DataFrame(columns=datachecker.header())
 
 
