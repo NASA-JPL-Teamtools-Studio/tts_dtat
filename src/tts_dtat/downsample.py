@@ -209,8 +209,8 @@ class PlotOrchestrator:
         self._n_points = n_points
         self._x_var = x_var
         self._kwargs: Dict[str, Any] = kwargs
-        # Auto-detect name_col from TtsDataFrame.LABEL_COL when available.
-        self._name_col: str = getattr(type(data), "LABEL_COL", None) or "name"
+        # Use "name" as the label column to avoid conflicts with TtsDataFrame.name property
+        self._name_col: str = "name"
 
     # ------------------------------------------------------------------
     # Public API
@@ -225,7 +225,6 @@ class PlotOrchestrator:
         for k, v in kwargs.items():
             if k == "data":
                 self._data = v
-                self._name_col = getattr(type(v), "LABEL_COL", None) or "name"
             elif k == "y_vars":
                 self._y_vars = list(v)
             elif k == "n_points":
@@ -250,8 +249,6 @@ class PlotOrchestrator:
             self._data, self._n_points,
             x_col=self._x_var, name_col=self._name_col,
         )
-        if self._name_col != "name" and self._name_col in ds.columns:
-            ds = ds.rename(columns={self._name_col: "name"})
         fig, _colors, _markers, _traces = make_stacked_graph(
             ds, self._y_vars, x_var=self._x_var, **self._kwargs
         )
@@ -340,7 +337,17 @@ class PlotOrchestrator:
             finally:
                 _updating[0] = False
 
-        fw.layout.on_change(_on_layout_change, "xaxis.autorange", "xaxis.range")
+        # make_stacked_graph builds one subplot row per y_vars group via
+        # make_subplots(..., shared_xaxes=True), which only suppresses
+        # duplicate tick labels — it does NOT link each row's zoom/pan range
+        # (each row gets its own independent xaxis, xaxis2, xaxis3, ...).
+        # Register the callback on every x-axis so zooming any subplot
+        # (not just the first) re-downsamples via LTTB.
+        for axis in fw.select_xaxes():
+            axis_name = axis.plotly_name
+            fw.layout.on_change(
+                _on_layout_change, f"{axis_name}.autorange", f"{axis_name}.range"
+            )
 
         # FigureWidget measures its container's width at initial mount time,
         # which can race ahead of the surrounding DOM/flexbox layout
