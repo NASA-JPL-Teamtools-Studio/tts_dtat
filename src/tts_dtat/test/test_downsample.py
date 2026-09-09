@@ -319,3 +319,31 @@ class TestPlotOrchestratorInteractive:
         import importlib
         import tts_dtat.downsample
         importlib.reload(tts_dtat.downsample)  # re-importing should be safe
+
+    def test_interactive_wires_zoom_on_every_subplot_axis(self, orchestrator_df):
+        """Regression test: make_stacked_graph's shared_xaxes=True subplots
+        each get their own independent xaxis/xaxis2/... (shared_xaxes only
+        suppresses duplicate tick labels, it does not link zoom ranges), so
+        .interactive() must register the zoom callback on every subplot's
+        x-axis, not just the first.
+        """
+        fw = PlotOrchestrator(
+            orchestrator_df, [["A"], ["B"]], n_points=100
+        ).interactive()
+
+        axis_names = [ax.plotly_name for ax in fw.select_xaxes()]
+        assert "xaxis2" in axis_names
+
+        times = pd.to_datetime(orchestrator_df["scet"])
+        t_min, t_max = times.min(), times.max()
+        span = t_max - t_min
+        t0 = t_min + span * 0.45
+        t1 = t_min + span * 0.55
+
+        before_len = len(fw.data[1].x)
+        fw.plotly_relayout(
+            {"xaxis2.autorange": False, "xaxis2.range": [str(t0), str(t1)]}
+        )
+        after_len = len(fw.data[1].x)
+
+        assert after_len < before_len

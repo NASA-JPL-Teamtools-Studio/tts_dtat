@@ -41,7 +41,7 @@ def make_stacked_graph(
     event_line: bool = None,
     doy: bool = True,
     global_y_label: bool = False,
-    xaxis_showticklabels: bool = False,
+    xaxis_showticklabels: bool = True,
     max_points: Optional[int] = None,
 ):
     """
@@ -75,7 +75,10 @@ def make_stacked_graph(
     """
     if max_points is not None:
         from tts_dtat.downsample import downsample as _downsample
-        data = _downsample(data, max_points, x_col=x_var)
+        _name_col = getattr(type(data), "LABEL_COL", None) or "name"
+        data = _downsample(data, max_points, x_col=x_var, name_col=_name_col)
+        if _name_col != "name" and _name_col in data.columns:
+            data = data.rename(columns={_name_col: "name"})
 
     graph = go.Figure()
     graph.update_layout(
@@ -198,9 +201,9 @@ def make_stacked_graph(
                 if y_val not in visible_traces:
                     visible_traces.append(y_val)
                 data_slice = dtatdata.get_data_from_state(data, y_val)
-                
+                data_slice = data_slice.sort_values(x_var)
                 data_slice = data_slice.copy()
-                
+
                 try:
                     data_slice.loc[:, "value"] = pd.to_numeric(data_slice["value"])
                 except (ValueError, TypeError):
@@ -283,12 +286,20 @@ def make_stacked_graph(
                           trace_line["color"] = mv_color
                 # --- END: Handle Overrides ---
 
+                if datachecker.is_time_type(x_var) and x_var in data_slice.columns:
+                    _x_series = datachecker.parse_time_column(data_slice[x_var])
+                    # Convert datetime64 to Timestamp objects for Plotly compatibility
+                    if pd.api.types.is_datetime64_any_dtype(_x_series):
+                        _x_series = pd.DatetimeIndex(_x_series).astype(object)
+                else:
+                    _x_series = data_slice[x_var]
+
                 graph.add_trace(
                     go.Scatter(
-                        x=data_slice[x_var],
+                        x=_x_series,
                         y=data_slice["value"],
                         name=y_val,
-                        meta=mouseover_maker.make_meta(z_var, data_slice),
+                        meta=mouseover_maker.make_meta(z_var, data_slice, time_col=x_var),
                         hovertemplate=mouseover_maker.ht_X_Y_Z_time_names(
                             xaxis=x_var, yaxis=y_val, zaxis=z_var
                         ),
@@ -358,7 +369,7 @@ def make_stacked_graph(
             linewidth=3,
             showticklabels=xaxis_showticklabels
         )
-        if doy and datachecker.is_time_type(x_var):
+        if datachecker.is_time_type(x_var):
             graph.update_xaxes(
                 tickformat='%Y-%m-%d %H:%M:%S',
                 type='date'
@@ -489,7 +500,7 @@ def make_diff_graph(
         y = y1_data_slice["value"], 
         fill='tozeroy',
         name=y1,
-        meta=mouseover_maker.make_meta(None, y1_data_slice),
+        meta=mouseover_maker.make_meta(None, y1_data_slice, time_col=x_var),
         hovertemplate=mouseover_maker.ht_X_Y_Z_time_names(
             xaxis=x_var, yaxis=y1, zaxis=None
         ),
@@ -499,7 +510,7 @@ def make_diff_graph(
             y = y2_data_slice["value"], 
             fill='tozeroy',
             name=y2,
-            meta=mouseover_maker.make_meta(None, y2_data_slice),
+            meta=mouseover_maker.make_meta(None, y2_data_slice, time_col=x_var),
             hovertemplate=mouseover_maker.ht_X_Y_Z_time_names(
                 xaxis=x_var, yaxis=y2, zaxis=None
             ),
@@ -644,7 +655,7 @@ def make_bar_graph(
             x = y1_data_slice[x_var], 
             y = y1_data_slice["value"], 
             name=y1,
-            meta=mouseover_maker.make_meta(None, y1_data_slice),
+            meta=mouseover_maker.make_meta(None, y1_data_slice, time_col=x_var),
             hovertemplate=mouseover_maker.ht_X_Y_Z_time_names(
                 xaxis=x_var, yaxis=y1, zaxis=None
             )
@@ -653,7 +664,7 @@ def make_bar_graph(
             x = y2_data_slice[x_var], 
             y = y2_data_slice["value"], 
             name=y2,
-            meta=mouseover_maker.make_meta(None, y2_data_slice),
+            meta=mouseover_maker.make_meta(None, y2_data_slice, time_col=x_var),
             hovertemplate=mouseover_maker.ht_X_Y_Z_time_names(
                 xaxis=x_var, yaxis=y2, zaxis=None
             )
