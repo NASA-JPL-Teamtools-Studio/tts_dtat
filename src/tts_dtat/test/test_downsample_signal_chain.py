@@ -72,20 +72,12 @@ class TestDownsampleSignalChain:
             f"Downsampled: {downsampled_names}"
         )
 
-    def test_plot_renames_label_column(self):
-        """plot() must rename LABEL_COL to 'name' for consistency."""
-        # Simulate FssIeChanvalsFrame with LABEL_COL='channel'
-        class MockFrame(pd.DataFrame):
-            LABEL_COL = 'channel'
-            DEFAULT_TIME_LABEL = 'timestamp'
-            
-            @property
-            def _constructor(self):
-                return MockFrame
-        
-        data = MockFrame({
+    def test_plot_uses_name_column(self):
+        """plot() must use 'name' column as label."""
+        # Data must have 'name' column (not renamed from LABEL_COL)
+        data = pd.DataFrame({
             'timestamp': pd.date_range('2026-01-01', periods=100, freq='1s'),
-            'channel': ['SP_VEL_U'] * 100,
+            'name': ['SP_VEL_U'] * 100,
             'value': range(100),
         })
         
@@ -97,18 +89,10 @@ class TestDownsampleSignalChain:
         assert len(fig.data) > 0, "plot() returned figure with no traces"
 
     def test_interactive_rename_consistency(self):
-        """interactive() must rename columns consistently with plot()."""
-        class MockFrame(pd.DataFrame):
-            LABEL_COL = 'channel'
-            DEFAULT_TIME_LABEL = 'timestamp'
-            
-            @property
-            def _constructor(self):
-                return MockFrame
-        
-        data = MockFrame({
+        """interactive() must work with 'name' column."""
+        data = pd.DataFrame({
             'timestamp': pd.date_range('2026-01-01', periods=100, freq='1s'),
-            'channel': ['SP_VEL_U'] * 100,
+            'name': ['SP_VEL_U'] * 100,
             'value': range(100),
         })
         
@@ -125,25 +109,17 @@ class TestDownsampleSignalChain:
         except ImportError:
             pytest.skip("ipywidgets not available")
 
-    def test_apply_xrange_filters_by_renamed_column(self):
-        """_apply_xrange must filter by 'name' after renaming."""
-        class MockFrame(pd.DataFrame):
-            LABEL_COL = 'channel'
-            DEFAULT_TIME_LABEL = 'timestamp'
-            
-            @property
-            def _constructor(self):
-                return MockFrame
-        
-        data = MockFrame({
+    def test_apply_xrange_filters_by_name_column(self):
+        """_apply_xrange must filter by 'name' column."""
+        data = pd.DataFrame({
             'timestamp': pd.date_range('2026-01-01', periods=200, freq='1s'),
-            'channel': ['CH1'] * 100 + ['CH2'] * 100,
+            'name': ['CH1'] * 100 + ['CH2'] * 100,
             'value': list(range(100)) + list(range(100, 200)),
         })
         
         orch = PlotOrchestrator(data, [['CH1'], ['CH2']], n_points=50, x_var='timestamp')
         
-        # Create the figure (which renames columns)
+        # Create the figure
         fig = orch.plot()
         assert len(fig.data) == 2, f"Expected 2 traces, got {len(fig.data)}"
         

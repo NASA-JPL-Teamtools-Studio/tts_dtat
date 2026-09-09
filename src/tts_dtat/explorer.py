@@ -608,9 +608,6 @@ class ChannelExplorer:
                     continue
                 result = fn(channels, t0, t1)
                 if result is not None and len(result) > 0:
-                    label_col = getattr(type(result), "LABEL_COL", None)
-                    if label_col and label_col != "name" and label_col in result.columns:
-                        result = result.rename(columns={label_col: "name"})
                     time_col = getattr(type(result), "DEFAULT_TIME_LABEL", None) or next(
                         (c for c in ("scet", "timestamp", "ert") if c in result.columns), None
                     )
@@ -618,16 +615,18 @@ class ChannelExplorer:
                         result = result.rename(columns={time_col: "scet"})
                     frames.append(result)
             # Wrap in plain pd.DataFrame to strip any TtsDataFrame subclass type.
-            # Columns were renamed to "name"/"scet" above; callers (PlotOrchestrator,
-            # _on_plot x_var detection) must not pick up stale LABEL_COL /
-            # DEFAULT_TIME_LABEL from the original subclass via type(data).
+            # Column was renamed to "scet" above; callers (PlotOrchestrator,
+            # _on_plot x_var detection) must not pick up stale DEFAULT_TIME_LABEL
+            # from the original subclass via type(data).
             result = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
             return pd.DataFrame(result)
         else:
             if self._query_fn is None:
                 return pd.DataFrame()
             channels = [ch for _, ch in self._selected]
-            return self._query_fn(channels, t0, t1)
+            result = self._query_fn(channels, t0, t1)
+            # Wrap in plain pd.DataFrame to strip any TtsDataFrame subclass type
+            return pd.DataFrame(result) if result is not None else pd.DataFrame()
 
 
 # ---------------------------------------------------------------------------
