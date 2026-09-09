@@ -236,10 +236,96 @@ class PlotOrchestrator:
         return fig
 
     def interactive(self):
-        """Return a zoom-reactive ``go.FigureWidget`` (implemented in T5)."""
-        raise NotImplementedError(
-            "PlotOrchestrator.interactive() is implemented in T5 (#14)."
-        )
+        """Return a zoom-reactive ``go.FigureWidget`` backed by LTTB.
+
+        On zoom or pan the visible x-axis range is re-downsampled from the
+        full in-memory dataset and pushed into the live widget via
+        ``batch_update``.  Double-clicking to reset zoom restores the full
+        downsampled view.
+
+        ``ipywidgets`` is lazy-imported inside this method; importing
+        ``tts_dtat.downsample`` without ``ipywidgets`` installed will not
+        raise at import time.
+
+        Returns:
+            ``plotly.graph_objects.FigureWidget``
+
+        Raises:
+            ImportError: If ``plotly`` with ``ipywidgets`` support is not
+                available.
+        """
+        try:
+            import plotly.graph_objects as go
+        except ImportError:
+            raise ImportError(
+                "plotly is required for .interactive(). "
+                "Install with: pip install plotly ipywidgets"
+            )
+
+        fig = self.plot()
+        fw = go.FigureWidget(fig)
+
+        _x_times = pd.to_datetime(self._data[self._x_var], errors="coerce")
+        _updating = [False]
+
+        def _on_layout_change(layout, autorange, x_range):
+            if _updating[0]:
+                return
+            _updating[0] = True
+            try:
+                if autorange:
+                    # Home button — restore full dataset view
+                    self._apply_xrange(fw, None, _x_times)
+                else:
+                    self._apply_xrange(fw, x_range, _x_times)
+            finally:
+                _updating[0] = False
+
+        fw.layout.on_change(_on_layout_change, "xaxis.autorange", "xaxis.range")
+        return fw
+
+    def _apply_xrange(
+        self,
+        fw: Any,
+        x_range: Optional[Any],
+        x_times: Optional[pd.Series] = None,
+    ) -> None:
+        """Re-downsample and push trace data into *fw* for a given x-axis range.
+
+        Extracted from :meth:`interactive` so tests can exercise the update
+        logic directly without simulating a Jupyter relayout event.
+
+        Args:
+            fw: A ``go.FigureWidget`` whose traces are to be updated.
+            x_range: ``None`` → restore full-dataset view; otherwise a
+                two-element sequence ``[t0, t1]`` of strings or timestamps
+                describing the zoomed x-axis range.
+            x_times: Pre-computed datetime ``pd.Series`` aligned with
+                ``self._data``.  Computed on the fly when ``None``
+                (slightly slower; acceptable for tests).
+        """
+        if x_times is None:
+            x_times = pd.to_datetime(self._data[self._x_var], errors="coerce")
+
+        if x_range is None:
+            ds = downsample(self._data, self._n_points, x_col=self._x_var)
+        else:
+            t0 = pd.Timestamp(x_range[0])
+            t1 = pd.Timestamp(x_range[1])
+            mask = (x_times >= t0) & (x_times <= t1)
+            windowed = self._data[mask]
+            if windowed.empty:
+                return
+            ds = downsample(windowed, self._n_points, x_col=self._x_var)
+
+        with fw.batch_update():
+            for trace in fw.data:
+                td = ds[ds["name"] == trace.name]
+                if not td.empty:
+                    trace.x = td[self._x_var].values
+                    trace.y = pd.to_numeric(
+                        td["value"], errors="coerce"
+                    ).values
 
     def __repr__(self) -> str:
         return (
