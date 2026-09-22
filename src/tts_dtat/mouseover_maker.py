@@ -16,7 +16,7 @@ def default_hovertemplate():
     return template
 
 
-def make_meta(zvar, data):
+def make_meta(zvar, data, time_col="scet"):
     """Returns the meta value for a chart which should
     be set to allow the Z and time values to be reflected
     in hovertext tooltips made by this module.
@@ -27,20 +27,28 @@ def make_meta(zvar, data):
         zvar (str): The name of the column containing the Z-axis (color) data.
                     Can be None if no Z-axis is used.
         data (pd.DataFrame): The pandas DataFrame containing the chart data,
-                             including 'scet' and the zvar column.
+                             including the time column and the zvar column.
+        time_col (str): Name of the time column.  Defaults to ``"scet"``.
+                        Rows where this column is absent produce ``None`` for
+                        the time entry in meta.
 
     Returns:
-        list: A list of lists, where each inner list contains [z_value, scet_time]
+        list: A list of lists, where each inner list contains [z_value, time_value]
               corresponding to a row in the dataframe.
     """
+    _tcol = time_col if time_col in data.columns else None
+    n = len(data)
     meta = ""
     if zvar is not None and zvar in data.columns:
-        meta = [
-            [data[zvar].iloc[i], data["scet"].iloc[i]]
-            for i in range(0, len(data["scet"]))
-        ]
+        if _tcol:
+            meta = [[data[zvar].iloc[i], data[_tcol].iloc[i]] for i in range(n)]
+        else:
+            meta = [[data[zvar].iloc[i], None] for i in range(n)]
     else:
-        meta = [[None, data["scet"].iloc[i]] for i in range(0, len(data["scet"]))]
+        if _tcol:
+            meta = [[None, data[_tcol].iloc[i]] for i in range(n)]
+        else:
+            meta = [[None, None] for _ in range(n)]
     return meta
 
 
