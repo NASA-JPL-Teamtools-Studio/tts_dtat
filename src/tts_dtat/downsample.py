@@ -210,7 +210,8 @@ class PlotOrchestrator:
         self._x_var = x_var
         self._kwargs: Dict[str, Any] = kwargs
         # Use "name" as the label column to avoid conflicts with TtsDataFrame.name property
-        self._name_col: str = "name"
+        # But read LABEL_COL from the data class so custom frame schemas work.
+        self._name_col: str = getattr(type(data), "LABEL_COL", None) or "name"
 
     # ------------------------------------------------------------------
     # Public API
