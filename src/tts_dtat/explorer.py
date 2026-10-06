@@ -608,16 +608,29 @@ class ChannelExplorer:
                     continue
                 result = fn(channels, t0, t1)
                 if result is not None and len(result) > 0:
+                    label_col = getattr(type(result), "LABEL_COL", None) or "name"
                     time_col = getattr(type(result), "DEFAULT_TIME_LABEL", None) or next(
                         (c for c in ("scet", "timestamp", "ert") if c in result.columns), None
                     )
+                    rename_columns = {}
+                    if label_col != "name" and label_col in result.columns:
+                        rename_columns[label_col] = "name"
                     if time_col and time_col != "scet" and time_col in result.columns:
-                        result = result.rename(columns={time_col: "scet"})
+                        rename_columns[time_col] = "scet"
+                    if rename_columns:
+                        target_columns = set(rename_columns.values())
+                        drop_columns = [
+                            column
+                            for column in target_columns
+                            if column in result.columns and column not in rename_columns
+                        ]
+                        if drop_columns:
+                            result = result.drop(columns=drop_columns)
+                        result = result.rename(columns=rename_columns)
                     frames.append(result)
             # Wrap in plain pd.DataFrame to strip any TtsDataFrame subclass type.
-            # Column was renamed to "scet" above; callers (PlotOrchestrator,
-            # _on_plot x_var detection) must not pick up stale DEFAULT_TIME_LABEL
-            # from the original subclass via type(data).
+            # Label and time columns are normalized above so callers
+            # (PlotOrchestrator, _on_plot) receive one stable schema.
             result = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
             return pd.DataFrame(result)
         else:

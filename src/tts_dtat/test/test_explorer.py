@@ -220,6 +220,37 @@ class TestCallbackRouting:
         assert calls[0][0] == pd.Timestamp("2026-01-01")
         assert calls[0][1] == pd.Timestamp("2026-01-02")
 
+    def test_multi_source_normalizes_custom_label_columns(self):
+        class ChannelFrame(pd.DataFrame):
+            LABEL_COL = "channel"
+            DEFAULT_TIME_LABEL = "timestamp"
+
+            @property
+            def _constructor(self):
+                return ChannelFrame
+
+        def query_fn(channels, t0, t1):
+            return ChannelFrame({
+                "channel": channels,
+                "timestamp": [pd.Timestamp("2026-01-01")],
+                "scet": [None],
+                "value": [1.0],
+            })
+
+        ex = ChannelExplorer(
+            {"IE": ["SP_VEL_U"]},
+            query_fns={"IE": query_fn},
+        )
+        ex._source_selector.value = "IE"
+        ex._combobox.value = "SP_VEL_U"
+        ex._on_add(None)
+
+        result = ex._run_query(pd.Timestamp("2026-01-01"), pd.Timestamp("2026-01-02"))
+
+        assert list(result["name"]) == ["SP_VEL_U"]
+        assert "channel" not in result.columns
+        assert list(result["scet"]) == [pd.Timestamp("2026-01-01")]
+
     def test_multi_source_routes_to_correct_fn(self):
         calls_a, calls_b = [], []
 
