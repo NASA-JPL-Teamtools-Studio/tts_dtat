@@ -204,14 +204,19 @@ class PlotOrchestrator:
         x_var: str = "scet",
         **kwargs: Any,
     ) -> None:
-        self._data = data
+        self._data = self._normalize_data(data)
         self._y_vars = list(y_vars)
         self._n_points = n_points
         self._x_var = x_var
         self._kwargs: Dict[str, Any] = kwargs
-        # Use "name" as the label column to avoid conflicts with TtsDataFrame.name property
-        # But read LABEL_COL from the data class so custom frame schemas work.
-        self._name_col: str = getattr(type(data), "LABEL_COL", None) or "name"
+        self._name_col = "name"
+
+    def _normalize_data(self, data: pd.DataFrame) -> pd.DataFrame:
+        """Normalize mission-specific label columns to the plotting schema."""
+        label_col = getattr(type(data), "LABEL_COL", None) or "name"
+        if label_col == "name" or label_col not in data.columns:
+            return data
+        return data.rename(columns={label_col: "name"})
 
     # ------------------------------------------------------------------
     # Public API
@@ -225,7 +230,7 @@ class PlotOrchestrator:
         """
         for k, v in kwargs.items():
             if k == "data":
-                self._data = v
+                self._data = self._normalize_data(v)
             elif k == "y_vars":
                 self._y_vars = list(v)
             elif k == "n_points":
