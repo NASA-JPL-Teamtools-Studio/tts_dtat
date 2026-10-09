@@ -11,7 +11,7 @@ except ImportError:
     from typing_extensions import TypedDict
     from typing import MutableMapping
 
-from typing import Any, Optional
+from typing import Any, Optional, Sequence
 
 class Line(TypedDict):
     """
@@ -79,3 +79,28 @@ class CustomizedMarker(TypedDict):
     colorscale: str
     showscale: bool
     line: Line
+
+
+class GeoBatch(TypedDict):
+    """
+    A named batch of points or a line to draw on an Earth surface plot.
+
+    Attributes:
+        lat (Sequence[float]): Latitudes in degrees.
+        lon (Sequence[float]): Longitudes in degrees.
+        text (Optional[Sequence[str]]): Per-point hover labels. If omitted,
+            hover text falls back to showing only lat/lon.
+        mode (str): "markers" (default) or "lines".
+        marker (Optional[CustomizedMarker]): Marker styling for mode="markers".
+            Falls back to the next unassigned palette color/symbol if omitted.
+        line (Optional[Line]): Line styling for mode="lines". Falls back to
+            the next unassigned palette color if omitted.
+        name (Optional[str]): Legend name. Defaults to the batch's dict key.
+    """
+    lat: Sequence[float]
+    lon: Sequence[float]
+    text: Optional[Sequence[str]]
+    mode: str
+    marker: Optional[CustomizedMarker]
+    line: Optional[Line]
+    name: Optional[str]
