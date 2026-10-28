@@ -204,3 +204,51 @@ def test_axis_config_places_secondary_axis_on_right(plotting_data):
     assert fig.layout.yaxis2.side == "right"
     assert list(fig.layout.yaxis2.range) == [0, 30]
     assert fig.layout.yaxis2.title.text == "Secondary"
+
+
+def test_more_than_two_axes_logs_design_warning(plotting_data, monkeypatch):
+    warnings = []
+    monkeypatch.setattr(
+        plot.logger,
+        "warning",
+        lambda message, *args: warnings.append(message % args if args else message),
+    )
+    data = pd.concat(
+        [
+            plotting_data,
+            plotting_data.assign(name="C", value=plotting_data["value"] + 1),
+        ],
+        ignore_index=True,
+    )
+
+    plot.make_stacked_graph(
+        data,
+        [["A", "B", "C"]],
+        multi_axis=True,
+        axis_config={
+            "A": {"side": "left", "title": "A"},
+            "B": {"side": "left", "title": "B"},
+            "C": {"side": "left", "title": "C"},
+        },
+    )
+
+    assert len(warnings) == 1
+    assert "more than two" in warnings[0]
+    assert "docs/chart-design.md" in warnings[0]
+
+
+def test_duplicate_axis_side_labels_are_hidden(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A", "B"]],
+        multi_axis=True,
+        axis_config={
+            "A": {"side": "left", "title": "A"},
+            "B": {"side": "left", "title": "B"},
+        },
+    )
+
+    assert fig.layout.yaxis.side == "left"
+    assert fig.layout.yaxis.showticklabels is True
+    assert fig.layout.yaxis2.side == "left"
+    assert fig.layout.yaxis2.showticklabels is False

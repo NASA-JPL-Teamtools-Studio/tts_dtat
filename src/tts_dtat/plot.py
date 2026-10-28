@@ -16,6 +16,9 @@ import tts_dtat.mouseover_maker as mouseover_maker
 import tts_dtat.commonchartfuncs as common
 import tts_dtat.palette as palette
 from tts_dtat.types import CustomizationOptions
+from tts_utilities.logger import create_logger
+
+logger = create_logger(__name__)
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -142,8 +145,8 @@ def make_stacked_graph(
     num_subplots = len(y_vars)
 
     # Adjust margins if global label is present to avoid cutoff
-    default_left_margin = 100 if global_y_label else 75
-    figure_margins = dict(l=default_left_margin, b=100, t=50, r=75) if figure_margins is None else figure_margins
+    default_left_margin = 100 if global_y_label else 80
+    figure_margins = dict(l=default_left_margin, b=100, t=115, r=100) if figure_margins is None else figure_margins
 
     if figure_height is None:
         figure_height = max(450, 200 * num_subplots + 2)
@@ -168,7 +171,7 @@ def make_stacked_graph(
                 linewidth=3, # BOLD DEFAULT
             ),
             legend=dict(
-                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
+                orientation="h", yanchor="bottom", y=1.08, xanchor="left", x=0
             ),
             height=figure_height
         )
@@ -417,6 +420,35 @@ def make_stacked_graph(
                         "width": band.get("line_width", 0),
                     },
                 )
+
+        for subplot_num, plot_y_vars in enumerate(y_vars, start=1):
+            axes = []
+            for variable in plot_y_vars:
+                axis_name = axis_by_var[variable]
+                if axis_name not in axes:
+                    axes.append(axis_name)
+            if len(axes) > 2:
+                logger.warning(
+                    "subplot %s has more than two overlaid y-axes (%s); this can "
+                    "conflict with generally accepted chart-design principles. "
+                    "See docs/chart-design.md.",
+                    subplot_num,
+                    len(axes),
+                )
+            axes_by_side = {"left": [], "right": []}
+            for variable in plot_y_vars:
+                axis_name = axis_by_var[variable]
+                side = axis_config.get(variable, {}).get("side", "left")
+                if axis_name not in axes_by_side[side]:
+                    axes_by_side[side].append(axis_name)
+            for side, side_axes in axes_by_side.items():
+                for index, axis_name in enumerate(side_axes):
+                    graph.layout[axis_name].update(
+                        side=side,
+                        position=0 if side == "left" else 1,
+                        showticklabels=index == 0,
+                        title=None if index else graph.layout[axis_name].title,
+                    )
 
         if multi_axis:
             for trace_num, trace in enumerate(graph.data, start=1):
