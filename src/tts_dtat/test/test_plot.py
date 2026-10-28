@@ -149,3 +149,106 @@ def test_make_bar_graph(plotting_data):
     # Accessing fig.data[0].y tuple/list
     # Note: Interpolation might reorder things, but values should align.
     assert fig.data[0].y[0] == 5
+
+
+def test_background_bands_default_to_all_subplots(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A"], ["B"]],
+        vertical_bands=[
+            {
+                "x0": pd.Timestamp("2020-01-01 10:30"),
+                "x1": pd.Timestamp("2020-01-01 11:30"),
+                "color": "rgba(10, 20, 30, 0.25)",
+            }
+        ],
+    )
+
+    assert len(fig.layout.shapes) == 2
+    assert {shape.yref for shape in fig.layout.shapes} == {"y domain", "y2 domain"}
+    assert all(shape.fillcolor == "rgba(10, 20, 30, 0.25)" for shape in fig.layout.shapes)
+    assert all(shape.layer == "below" for shape in fig.layout.shapes)
+
+
+def test_background_bands_can_target_selected_subplots(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A"], ["B"]],
+        vertical_bands=[
+            {
+                "x0": pd.Timestamp("2020-01-01 10:30"),
+                "x1": pd.Timestamp("2020-01-01 11:30"),
+                "subplots": [2],
+                "color": "rgba(10, 20, 30, 0.25)",
+            }
+        ],
+    )
+
+    assert len(fig.layout.shapes) == 1
+    assert fig.layout.shapes[0].yref == "y2 domain"
+
+
+def test_axis_config_places_secondary_axis_on_right(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A", "B"]],
+        axis_config={
+            "A": {"side": "left", "range": [0, 40], "title": "Primary"},
+            "B": {"side": "right", "range": [0, 30], "title": "Secondary"},
+        },
+    )
+
+    assert fig.layout.yaxis.overlaying is None
+    assert fig.layout.yaxis2.overlaying == "y"
+    assert fig.layout.yaxis.side == "left"
+    assert fig.layout.yaxis2.side == "right"
+    assert list(fig.layout.yaxis2.range) == [0, 30]
+    assert fig.layout.yaxis2.title.text == "Secondary"
+
+
+def test_more_than_two_axes_logs_design_warning(plotting_data, monkeypatch):
+    warnings = []
+    monkeypatch.setattr(
+        plot.logger,
+        "warning",
+        lambda message, *args: warnings.append(message % args if args else message),
+    )
+    data = pd.concat(
+        [
+            plotting_data,
+            plotting_data.assign(name="C", value=plotting_data["value"] + 1),
+        ],
+        ignore_index=True,
+    )
+
+    plot.make_stacked_graph(
+        data,
+        [["A", "B", "C"]],
+        multi_axis=True,
+        axis_config={
+            "A": {"side": "left", "title": "A"},
+            "B": {"side": "left", "title": "B"},
+            "C": {"side": "left", "title": "C"},
+        },
+    )
+
+    assert len(warnings) == 1
+    assert "more than two" in warnings[0]
+    assert "docs/chart-design.md" in warnings[0]
+
+
+def test_duplicate_axis_side_labels_are_hidden(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A", "B"]],
+        multi_axis=True,
+        axis_config={
+            "A": {"side": "left", "title": "A"},
+            "B": {"side": "left", "title": "B"},
+        },
+    )
+
+    assert fig.layout.yaxis.side == "left"
+    assert fig.layout.yaxis.showticklabels is True
+    assert fig.layout.yaxis2.side == "left"
+    assert fig.layout.yaxis2.showticklabels is False
