@@ -154,15 +154,36 @@ def test_make_bar_graph(plotting_data):
 def test_multi_channel_subplot_uses_concise_default_axis_title(plotting_data):
     fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A", "B"]])
 
-    assert fig.layout.yaxis.title.text == "Telemetry"
+    assert fig.layout.yaxis.title.text == "Unknown Units"
     assert len(fig.layout.yaxis.title.text) < 20
+
+
+def test_multiple_units_are_joined_in_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_units_from_states",
+        lambda data, names: ["V", "A", "Ohm"],
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A", "B"]])
+
+    assert fig.layout.yaxis.title.text == "V/A/Ohm"
+
+
+def test_long_combined_units_use_various_units_label(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_units_from_states",
+        lambda data, names: ["very-long-unit-name", "another-long-unit-name", "third-unit"],
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A", "B"]])
+
+    assert fig.layout.yaxis.title.text == "Various Units"
 
 
 def test_unknown_units_are_not_shown_in_axis_titles(plotting_data):
     fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
 
-    assert "Unknown" not in fig.layout.yaxis.title.text
-    assert "???" not in fig.layout.yaxis.title.text
+    assert fig.layout.yaxis.title.text == "Unknown Units"
 
 
 def test_multi_channel_subplot_honors_explicit_axis_title(plotting_data):
