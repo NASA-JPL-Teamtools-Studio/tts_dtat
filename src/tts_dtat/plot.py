@@ -20,11 +20,24 @@ from tts_utilities.logger import create_logger
 
 logger = create_logger(__name__)
 
+MAX_COMBINED_UNIT_LABEL_LENGTH = 30
+_UNKNOWN_UNITS = {"", "unknown", "???", "none", "nan"}
 
-def _axis_title(name, unit=None):
-    if unit is None or str(unit).strip().lower() in {"", "unknown", "???", "none", "nan"}:
-        return str(name)
-    return f"{name} ({unit})"
+
+def _units_title(units):
+    normalized = []
+    for unit in units or []:
+        value = str(unit).strip()
+        if value.lower() not in _UNKNOWN_UNITS and value not in normalized:
+            normalized.append(value)
+    if not normalized:
+        return "Unknown Units"
+    combined = "/".join(normalized)
+    return combined if len(combined) <= MAX_COMBINED_UNIT_LABEL_LENGTH else "Various Units"
+
+
+def _axis_title(unit=None):
+    return _units_title([unit])
 
 
 import warnings
@@ -233,9 +246,9 @@ def make_stacked_graph(
             if current_subplot_title is None:
                 if len(plot_y_vars) == 1:
                     unit = y_axis_units[0] if y_axis_units is not None else None
-                    current_subplot_title = _axis_title(plot_y_vars[0], unit)
+                    current_subplot_title = _axis_title(unit)
                 else:
-                    current_subplot_title = "Telemetry"
+                    current_subplot_title = _units_title(y_axis_units)
             # -------------------------------------------------
 
             y_axis_layout_name = "yaxis{}".format(subplot_num)
@@ -296,7 +309,7 @@ def make_stacked_graph(
                     y_axis_units = dtatdata.get_unit_from_state(data, y_val)
                     
                     # Generate specific title for multi-axis
-                    multi_axis_title = _axis_title(y_val, y_axis_units)
+                    multi_axis_title = _axis_title(y_axis_units)
                     y_axis_layout_name = "yaxis{}".format(trace_num)
 
                 axis_by_var[y_val] = y_axis_layout_name
