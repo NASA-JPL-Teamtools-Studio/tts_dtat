@@ -5,13 +5,13 @@ import json
 try:
     # Try the standard library first (Python 3.8+)
     from typing import TypedDict
-    from collections.abc import MutableMapping
 except ImportError:
     # Fall back to the extension (Python 3.7)
     from typing_extensions import TypedDict
-    from typing import MutableMapping
 
-from typing import Any, Optional
+# Always use typing.MutableMapping for subscriptable generic types
+# collections.abc.MutableMapping is only subscriptable in Python 3.9+
+from typing import MutableMapping, Any, Optional
 
 class Line(TypedDict):
     """
