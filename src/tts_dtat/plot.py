@@ -20,6 +20,13 @@ from tts_utilities.logger import create_logger
 
 logger = create_logger(__name__)
 
+
+def _axis_title(name, unit=None):
+    if unit is None or str(unit).strip().lower() in {"", "unknown", "???", "none", "nan"}:
+        return str(name)
+    return f"{name} ({unit})"
+
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -225,9 +232,10 @@ def make_stacked_graph(
             # If no title was set above, auto-generate from variables and units
             if current_subplot_title is None:
                 if len(plot_y_vars) == 1:
-                    current_subplot_title = f'{plot_y_vars[0]} ({y_axis_units[0]})' if y_axis_units is not None else f'{plot_y_vars[0]}'
+                    unit = y_axis_units[0] if y_axis_units is not None else None
+                    current_subplot_title = _axis_title(plot_y_vars[0], unit)
                 else:
-                    current_subplot_title = f'{", ".join(plot_y_vars)} ({y_axis_units if len(y_axis_units) == 1 else ", ".join(y_axis_units)})' if y_axis_units is not None else f'{", ".join(plot_y_vars)}'
+                    current_subplot_title = "Telemetry"
             # -------------------------------------------------
 
             y_axis_layout_name = "yaxis{}".format(subplot_num)
@@ -288,7 +296,7 @@ def make_stacked_graph(
                     y_axis_units = dtatdata.get_unit_from_state(data, y_val)
                     
                     # Generate specific title for multi-axis
-                    multi_axis_title = f'{y_val} ({y_axis_units})' if y_axis_units is not None else f'{y_val}'
+                    multi_axis_title = _axis_title(y_val, y_axis_units)
                     y_axis_layout_name = "yaxis{}".format(trace_num)
 
                 axis_by_var[y_val] = y_axis_layout_name

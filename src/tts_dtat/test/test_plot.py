@@ -151,6 +151,30 @@ def test_make_bar_graph(plotting_data):
     assert fig.data[0].y[0] == 5
 
 
+def test_multi_channel_subplot_uses_concise_default_axis_title(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A", "B"]])
+
+    assert fig.layout.yaxis.title.text == "Telemetry"
+    assert len(fig.layout.yaxis.title.text) < 20
+
+
+def test_unknown_units_are_not_shown_in_axis_titles(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
+
+    assert "Unknown" not in fig.layout.yaxis.title.text
+    assert "???" not in fig.layout.yaxis.title.text
+
+
+def test_multi_channel_subplot_honors_explicit_axis_title(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A", "B"]],
+        y_axis_title=["Receiver lock state"],
+    )
+
+    assert fig.layout.yaxis.title.text == "Receiver lock state"
+
+
 def test_background_bands_default_to_all_subplots(plotting_data):
     fig, _, _, _ = plot.make_stacked_graph(
         plotting_data,
