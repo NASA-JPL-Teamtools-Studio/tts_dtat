@@ -237,6 +237,24 @@ def test_more_than_two_axes_logs_design_warning(plotting_data, monkeypatch):
     assert "docs/chart-design.md" in warnings[0]
 
 
+def test_bands_follow_subplots_when_axes_are_overlaid(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A", "B"], ["A"]],
+        multi_axis=True,
+        vertical_bands=[
+            {
+                "x0": pd.Timestamp("2020-01-01 10:30"),
+                "x1": pd.Timestamp("2020-01-01 11:30"),
+                "subplots": [1, 2],
+                "color": "rgba(10, 20, 30, 0.25)",
+            }
+        ],
+    )
+
+    assert [shape.yref for shape in fig.layout.shapes] == ["y domain", "y3 domain"]
+
+
 def test_multi_axis_plot_does_not_reserve_trace_count_space(plotting_data):
     data = pd.concat(
         [

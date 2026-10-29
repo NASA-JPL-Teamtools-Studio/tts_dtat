@@ -198,6 +198,7 @@ def make_stacked_graph(
         trace_num = 1
         x_domain_start = 0.04 if multi_axis else 0
         axis_by_var = {}
+        subplot_axis_by_row = {}
 
         for subplot_num, plot_y_vars in enumerate(y_vars, start=1):
 
@@ -291,6 +292,8 @@ def make_stacked_graph(
                     y_axis_layout_name = "yaxis{}".format(trace_num)
 
                 axis_by_var[y_val] = y_axis_layout_name
+                if y_index == 0:
+                    subplot_axis_by_row[subplot_num] = y_axis_layout_name
                 final_axis_title = multi_axis_title if multi_axis else current_subplot_title
                 axis_layout = {
                     "title": {
@@ -415,10 +418,11 @@ def make_stacked_graph(
             elif isinstance(subplots, int):
                 subplots = [subplots]
             for subplot in subplots:
+                subplot_axis = subplot_axis_by_row[subplot]
                 graph.add_shape(
                     type="rect",
                     xref=xaxis_ref(subplot),
-                    yref=f"y{subplot if subplot > 1 else ''} domain",
+                    yref=f"{axis_ref(subplot_axis)} domain",
                     x0=band["x0"],
                     x1=band["x1"],
                     y0=0,
