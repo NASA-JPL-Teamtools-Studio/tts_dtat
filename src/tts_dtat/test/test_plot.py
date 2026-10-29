@@ -256,7 +256,7 @@ def test_multi_axis_plot_does_not_reserve_trace_count_space(plotting_data):
         },
     )
 
-    assert fig.layout.xaxis.domain[0] <= 0.1
+    assert fig.layout.xaxis.domain[0] <= 0.05
 
 
 def test_duplicate_axis_side_labels_are_hidden(plotting_data):

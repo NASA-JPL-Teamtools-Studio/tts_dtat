@@ -148,8 +148,8 @@ def make_stacked_graph(
     num_subplots = len(y_vars)
 
     # Adjust margins if global label is present to avoid cutoff
-    default_left_margin = 100 if global_y_label else 80
-    figure_margins = dict(l=default_left_margin, b=100, t=115, r=100) if figure_margins is None else figure_margins
+    default_left_margin = 100 if global_y_label else 55
+    figure_margins = dict(l=default_left_margin, b=75, t=85, r=75) if figure_margins is None else figure_margins
 
     if figure_height is None:
         figure_height = max(450, 200 * num_subplots + 2)
@@ -196,7 +196,7 @@ def make_stacked_graph(
         subplot_height = (1.0 - vertical_spacing * (num_subplots - 1)) / num_subplots
         
         trace_num = 1
-        x_domain_start = 0.08 if multi_axis else 0
+        x_domain_start = 0.04 if multi_axis else 0
         axis_by_var = {}
 
         for subplot_num, plot_y_vars in enumerate(y_vars, start=1):
@@ -387,7 +387,7 @@ def make_stacked_graph(
                             showarrow = True
                         )
 
-            x_domain_start = max(x_domain_start, 0.08 if multi_axis else 0)
+            x_domain_start = max(x_domain_start, 0.04 if multi_axis else 0)
         
 
         for variable, config in axis_config.items():
