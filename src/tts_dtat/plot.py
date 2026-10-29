@@ -196,7 +196,7 @@ def make_stacked_graph(
         subplot_height = (1.0 - vertical_spacing * (num_subplots - 1)) / num_subplots
         
         trace_num = 1
-        x_domain_start = 0
+        x_domain_start = 0.08 if multi_axis else 0
         axis_by_var = {}
 
         for subplot_num, plot_y_vars in enumerate(y_vars, start=1):
@@ -387,7 +387,7 @@ def make_stacked_graph(
                             showarrow = True
                         )
 
-            x_domain_start = max(x_domain_start, y_axis_position)
+            x_domain_start = max(x_domain_start, 0.08 if multi_axis else 0)
         
 
         for variable, config in axis_config.items():

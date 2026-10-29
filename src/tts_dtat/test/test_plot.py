@@ -237,6 +237,28 @@ def test_more_than_two_axes_logs_design_warning(plotting_data, monkeypatch):
     assert "docs/chart-design.md" in warnings[0]
 
 
+def test_multi_axis_plot_does_not_reserve_trace_count_space(plotting_data):
+    data = pd.concat(
+        [
+            plotting_data,
+            plotting_data.assign(name="C", value=plotting_data["value"] + 1),
+        ],
+        ignore_index=True,
+    )
+    fig, _, _, _ = plot.make_stacked_graph(
+        data,
+        [["A", "B", "C"]],
+        multi_axis=True,
+        axis_config={
+            "A": {"side": "left", "title": "A"},
+            "B": {"side": "left", "title": "B"},
+            "C": {"side": "right", "title": "C"},
+        },
+    )
+
+    assert fig.layout.xaxis.domain[0] <= 0.1
+
+
 def test_duplicate_axis_side_labels_are_hidden(plotting_data):
     fig, _, _, _ = plot.make_stacked_graph(
         plotting_data,
