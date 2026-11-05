@@ -45,6 +45,17 @@ def test_make_stacked_graph_basic(plotting_data):
     assert fig.data[0].name == "A"
     assert fig.data[1].name == "B"
 
+def test_stacked_graph_only_labels_bottom_x_axis(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A"], ["B"]],
+        x_var="scet",
+    )
+
+    assert fig.layout.xaxis.title.text is None
+    assert fig.layout.xaxis2.title.text == "scet (Time)"
+
+
 def test_make_stacked_graph_single_subplot(plotting_data):
     """Test generating a graph where multiple vars share a subplot."""
     y_vars = [["A", "B"]]
@@ -180,7 +191,45 @@ def test_long_combined_units_use_various_units_label(plotting_data, monkeypatch)
     assert fig.layout.yaxis.title.text == "Various Units"
 
 
-def test_unknown_units_are_not_shown_in_axis_titles(plotting_data):
+def test_none_units_use_no_units_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_unit_from_state",
+        lambda data, name: None,
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
+
+    assert fig.layout.yaxis.title.text == "No Units"
+
+
+def test_none_string_units_use_no_units_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_unit_from_state",
+        lambda data, name: "NONE",
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
+
+    assert fig.layout.yaxis.title.text == "No Units"
+
+
+def test_unknown_units_use_unknown_units_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_unit_from_state",
+        lambda data, name: "unknown",
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
+
+    assert fig.layout.yaxis.title.text == "Unknown Units"
+
+
+def test_placeholder_units_use_unknown_units_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_unit_from_state",
+        lambda data, name: "???",
+    )
     fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
 
     assert fig.layout.yaxis.title.text == "Unknown Units"

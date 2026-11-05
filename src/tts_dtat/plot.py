@@ -21,19 +21,31 @@ from tts_utilities.logger import create_logger
 logger = create_logger(__name__)
 
 MAX_COMBINED_UNIT_LABEL_LENGTH = 30
-_UNKNOWN_UNITS = {"", "unknown", "???", "none", "nan"}
+_NO_UNITS = {"none"}
+_UNKNOWN_UNITS = {"", "unknown", "???", "nan"}
 
 
 def _units_title(units):
     normalized = []
+    has_no_units = False
+    has_unknown_units = False
     for unit in units or []:
         value = str(unit).strip()
-        if value.lower() not in _UNKNOWN_UNITS and value not in normalized:
+        lowered = value.lower()
+        if lowered in _NO_UNITS:
+            has_no_units = True
+        elif lowered in _UNKNOWN_UNITS:
+            has_unknown_units = True
+        elif value not in normalized:
             normalized.append(value)
-    if not normalized:
+    if normalized:
+        combined = "/".join(normalized)
+        return combined if len(combined) <= MAX_COMBINED_UNIT_LABEL_LENGTH else "Various Units"
+    if has_unknown_units:
         return "Unknown Units"
-    combined = "/".join(normalized)
-    return combined if len(combined) <= MAX_COMBINED_UNIT_LABEL_LENGTH else "Various Units"
+    if has_no_units:
+        return "No Units"
+    return "Unknown Units"
 
 
 def _axis_title(unit=None):
@@ -540,7 +552,9 @@ def make_stacked_graph(
 
         x_unit = dtatdata.get_unit_from_state(data, x_var)
         graph.update_xaxes(
-            title_text=f'{x_var} ({x_unit})' if x_unit is not None else f'{x_var}'
+            title_text=f'{x_var} ({x_unit})' if x_unit is not None else f'{x_var}',
+            row=num_subplots,
+            col=1,
         )
 
         if figure_width is not None:
