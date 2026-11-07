@@ -54,6 +54,8 @@ def test_stacked_graph_only_labels_bottom_x_axis(plotting_data):
 
     assert fig.layout.xaxis.title.text is None
     assert fig.layout.xaxis2.title.text == "scet (Time)"
+    assert fig.layout.xaxis.showticklabels is False
+    assert fig.layout.xaxis2.showticklabels is True
 
 
 def test_make_stacked_graph_single_subplot(plotting_data):

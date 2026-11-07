@@ -505,20 +505,27 @@ def make_stacked_graph(
                 domain=[x_domain_start, 1], anchor="y{}".format(trace_num)
             )
 
-        graph.update_xaxes(
-            showline=True,
-            showgrid=True,
-            gridcolor=axis_line_color,
-            zerolinecolor=axis_line_color,
-            linecolor=axis_line_color,
-            linewidth=3,
-            showticklabels=xaxis_showticklabels
-        )
-        if datachecker.is_time_type(x_var):
+        for subplot_num in range(1, num_subplots + 1):
             graph.update_xaxes(
-                tickformat='%Y-%m-%d %H:%M:%S',
-                type='date'
+                showline=True,
+                showgrid=True,
+                gridcolor=axis_line_color,
+                zerolinecolor=axis_line_color,
+                linecolor=axis_line_color,
+                linewidth=3,
+                showticklabels=(
+                    xaxis_showticklabels and subplot_num == num_subplots
+                ),
+                row=subplot_num,
+                col=1,
             )
+            if datachecker.is_time_type(x_var):
+                graph.update_xaxes(
+                    tickformat='%Y-%m-%d %H:%M:%S',
+                    type='date',
+                    row=subplot_num,
+                    col=1,
+                )
 
         graph.update_yaxes(
             showline=True,
