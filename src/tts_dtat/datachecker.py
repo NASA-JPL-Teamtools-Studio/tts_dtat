@@ -25,7 +25,7 @@ def valid_value_col_names():
 def valid_time_type_cols():
     """A list of all valid time type column names.
     This is the source of truth definition."""
-    return ["scet", "ert", "doy"]
+    return ["scet", "ert", "doy", "timestamp"]
 
 
 def verify_header(data):
@@ -60,6 +60,22 @@ def handle_mixed_time_formats(timestamp):
         return datetime.datetime.strptime(timestamp, "%Y-%jT%H:%M:%S.%f")
     except ValueError:
         return datetime.datetime.strptime(timestamp, "%Y-%jT%H:%M:%S")
+
+
+def parse_time_column(time_data):
+    """Parse a time column that may be in DOY or ISO format.
+
+    Tries DOY formats first (``%Y-%jT%H:%M:%S``), then falls back to
+    pandas auto-detection.  Returns the input unchanged if all parse
+    attempts yield only NaT.
+    """
+    if pd.api.types.is_datetime64_any_dtype(time_data) and not time_data.isna().all():
+        return time_data
+    for fmt in ("%Y-%jT%H:%M:%S.%f", "%Y-%jT%H:%M:%S", None):
+        ts = pd.to_datetime(time_data, format=fmt, errors="coerce")
+        if not ts.isna().all():
+            return ts
+    return time_data
 
 
 def find_value_header(cols):
