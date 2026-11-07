@@ -16,6 +16,41 @@ import tts_dtat.mouseover_maker as mouseover_maker
 import tts_dtat.commonchartfuncs as common
 import tts_dtat.palette as palette
 from tts_dtat.types import CustomizationOptions
+from tts_utilities.logger import create_logger
+
+logger = create_logger(__name__)
+
+MAX_COMBINED_UNIT_LABEL_LENGTH = 30
+_NO_UNITS = {"none"}
+_UNKNOWN_UNITS = {"", "unknown", "???", "nan"}
+
+
+def _units_title(units):
+    normalized = []
+    has_no_units = False
+    has_unknown_units = False
+    for unit in units or []:
+        value = str(unit).strip()
+        lowered = value.lower()
+        if lowered in _NO_UNITS:
+            has_no_units = True
+        elif lowered in _UNKNOWN_UNITS:
+            has_unknown_units = True
+        elif value not in normalized:
+            normalized.append(value)
+    if normalized:
+        combined = "/".join(normalized)
+        return combined if len(combined) <= MAX_COMBINED_UNIT_LABEL_LENGTH else "Various Units"
+    if has_unknown_units:
+        return "Unknown Units"
+    if has_no_units:
+        return "No Units"
+    return "Unknown Units"
+
+
+def _axis_title(unit=None):
+    return _units_title([unit])
+
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -43,6 +78,8 @@ def make_stacked_graph(
     global_y_label: bool = False,
     xaxis_showticklabels: bool = True,
     max_points: Optional[int] = None,
+    axis_config: Optional[dict] = None,
+    vertical_bands: Optional[list] = None,
 ):
     """
     Creates a stacked graph with multiple subplots using Plotly.
@@ -69,6 +106,10 @@ def make_stacked_graph(
         global_y_label (bool, optional): If True, treats y_axis_title as a single label for the whole figure.
         max_points (Optional[int], optional): When set, each trace is downsampled to at
             most this many points using LTTB before plotting. ``None`` disables downsampling.
+        axis_config (Optional[dict], optional): Per-variable axis placement, range, and title.
+        vertical_bands (Optional[list], optional): Filled x-intervals. Each mapping has
+            ``x0`` and ``x1``, an optional ``subplots`` sequence, and a full RGBA
+            ``color``. Omitted ``subplots`` targets every subplot.
 
     Returns:
         tuple: (graph, unassigned_colors, marker_values, visible_traces)
@@ -79,6 +120,32 @@ def make_stacked_graph(
         data = _downsample(data, max_points, x_col=x_var, name_col=_name_col)
         if _name_col != "name" and _name_col in data.columns:
             data = data.rename(columns={_name_col: "name"})
+
+    axis_config = axis_config or {}
+    if axis_config:
+        multi_axis = True
+    subplot_vars = {index: list(values) for index, values in enumerate(y_vars or [], start=1)}
+    plotted_vars = {name for values in subplot_vars.values() for name in values}
+    invalid_axes = set(axis_config) - plotted_vars
+    if invalid_axes:
+        raise ValueError(f"axis_config references variables not in y_vars: {sorted(invalid_axes)}")
+    for name, config in axis_config.items():
+        if config.get("side", "left") not in {"left", "right"}:
+            raise ValueError(f"Invalid axis side for {name!r}: {config.get('side')!r}")
+
+    for band in vertical_bands or []:
+        subplots = band.get("subplots")
+        if subplots is None:
+            subplots = list(subplot_vars)
+        elif isinstance(subplots, int):
+            subplots = [subplots]
+        invalid_subplots = set(subplots) - set(subplot_vars)
+        if invalid_subplots:
+            raise ValueError(
+                f"vertical_bands references invalid subplots: {sorted(invalid_subplots)}"
+            )
+        if "x0" not in band or "x1" not in band:
+            raise ValueError("vertical_bands entries require x0 and x1")
 
     graph = go.Figure()
     graph.update_layout(
@@ -113,8 +180,8 @@ def make_stacked_graph(
     num_subplots = len(y_vars)
 
     # Adjust margins if global label is present to avoid cutoff
-    default_left_margin = 100 if global_y_label else 75
-    figure_margins = dict(l=default_left_margin, b=100, t=50, r=75) if figure_margins is None else figure_margins
+    default_left_margin = 100 if global_y_label else 55
+    figure_margins = dict(l=default_left_margin, b=75, t=85, r=75) if figure_margins is None else figure_margins
 
     if figure_height is None:
         figure_height = max(450, 200 * num_subplots + 2)
@@ -139,7 +206,7 @@ def make_stacked_graph(
                 linewidth=3, # BOLD DEFAULT
             ),
             legend=dict(
-                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
+                orientation="h", yanchor="bottom", y=1.08, xanchor="left", x=0
             ),
             height=figure_height
         )
@@ -161,7 +228,9 @@ def make_stacked_graph(
         subplot_height = (1.0 - vertical_spacing * (num_subplots - 1)) / num_subplots
         
         trace_num = 1
-        x_domain_start = 0
+        x_domain_start = 0.04 if multi_axis else 0
+        axis_by_var = {}
+        subplot_axis_by_row = {}
 
         for subplot_num, plot_y_vars in enumerate(y_vars, start=1):
 
@@ -188,15 +257,16 @@ def make_stacked_graph(
             # If no title was set above, auto-generate from variables and units
             if current_subplot_title is None:
                 if len(plot_y_vars) == 1:
-                    current_subplot_title = f'{plot_y_vars[0]} ({y_axis_units[0]})' if y_axis_units is not None else f'{plot_y_vars[0]}'
+                    unit = y_axis_units[0] if y_axis_units is not None else None
+                    current_subplot_title = _axis_title(unit)
                 else:
-                    current_subplot_title = f'{", ".join(plot_y_vars)} ({y_axis_units if len(y_axis_units) == 1 else ", ".join(y_axis_units)})' if y_axis_units is not None else f'{", ".join(plot_y_vars)}'
+                    current_subplot_title = _units_title(y_axis_units)
             # -------------------------------------------------
 
             y_axis_layout_name = "yaxis{}".format(subplot_num)
             title_color = "#000000"
 
-            for y_val in plot_y_vars:
+            for y_index, y_val in enumerate(plot_y_vars):
             
                 if y_val not in visible_traces:
                     visible_traces.append(y_val)
@@ -251,27 +321,30 @@ def make_stacked_graph(
                     y_axis_units = dtatdata.get_unit_from_state(data, y_val)
                     
                     # Generate specific title for multi-axis
-                    multi_axis_title = f'{y_val} ({y_axis_units})' if y_axis_units is not None else f'{y_val}'
+                    multi_axis_title = _axis_title(y_axis_units)
                     y_axis_layout_name = "yaxis{}".format(trace_num)
-                
-                # Determine final title to use for this axis
-                final_axis_title = multi_axis_title if multi_axis else current_subplot_title
 
-                graph.update_layout(
-                    {
-                        y_axis_layout_name: {
-                            "title": {
-                                "text": final_axis_title,
-                                "font": {"color": title_color},
-                            },
-                            "position": max(y_axis_position, 0),
-                            "anchor": "free",
-                            "tickfont": {"color": title_color},
-                            "domain": domain,
-                            "overlaying": "y{}".format(subplot_num),
-                        }
-                    }
-                )
+                axis_by_var[y_val] = y_axis_layout_name
+                if y_index == 0:
+                    subplot_axis_by_row[subplot_num] = y_axis_layout_name
+                final_axis_title = multi_axis_title if multi_axis else current_subplot_title
+                axis_layout = {
+                    "title": {
+                        "text": final_axis_title,
+                        "font": {"color": title_color},
+                    },
+                    "position": max(y_axis_position, 0),
+                    "anchor": "free",
+                    "tickfont": {"color": title_color},
+                    "domain": domain,
+                }
+                if multi_axis and y_index > 0:
+                    primary_layout = axis_by_var[plot_y_vars[0]]
+                    primary_suffix = primary_layout[len("yaxis"):]
+                    axis_layout["overlaying"] = (
+                        "y" if primary_suffix in {"", "1"} else f"y{primary_suffix}"
+                    )
+                graph.update_layout({y_axis_layout_name: axis_layout})
                 
                 # --- START: Handle Overrides for Trace Mode and Line Shape ---
                 trace_customs = customize_dict.get(y_val, {}) if customize_dict else {}
@@ -350,8 +423,80 @@ def make_stacked_graph(
                             showarrow = True
                         )
 
-            x_domain_start = max(x_domain_start, y_axis_position)
+            x_domain_start = max(x_domain_start, 0.04 if multi_axis else 0)
         
+
+        for variable, config in axis_config.items():
+            axis_layout_name = axis_by_var[variable]
+            axis_updates = {
+                "side": config.get("side", "left"),
+                "range": config.get("range"),
+                "title": {"text": config.get("title", variable)},
+            }
+            if config.get("side", "left") == "right":
+                axis_updates.update({"anchor": "free", "position": 1})
+            graph.update_layout({axis_layout_name: axis_updates})
+
+        def axis_ref(axis_layout_name):
+            suffix = axis_layout_name[len("yaxis"):]
+            return "y" if suffix in {"", "1"} else f"y{suffix}"
+
+        def xaxis_ref(subplot):
+            return "x" if subplot == 1 else f"x{subplot}"
+
+        for band in vertical_bands or []:
+            subplots = band.get("subplots")
+            if subplots is None:
+                subplots = list(subplot_vars)
+            elif isinstance(subplots, int):
+                subplots = [subplots]
+            for subplot in subplots:
+                subplot_axis = subplot_axis_by_row[subplot]
+                graph.add_shape(
+                    type="rect",
+                    xref=xaxis_ref(subplot),
+                    yref=f"{axis_ref(subplot_axis)} domain",
+                    x0=band["x0"],
+                    x1=band["x1"],
+                    y0=0,
+                    y1=1,
+                    fillcolor=band.get("color", "rgba(128, 128, 128, 0.25)"),
+                    opacity=band.get("opacity", 1.0),
+                    layer=band.get("layer", "below"),
+                    line={
+                        "color": band.get("line_color", band.get("color", "rgba(0, 0, 0, 0)")),
+                        "width": band.get("line_width", 0),
+                    },
+                )
+
+        for subplot_num, plot_y_vars in enumerate(y_vars, start=1):
+            axes = []
+            for variable in plot_y_vars:
+                axis_name = axis_by_var[variable]
+                if axis_name not in axes:
+                    axes.append(axis_name)
+            if len(axes) > 2:
+                logger.warning(
+                    "subplot %s has more than two overlaid y-axes (%s); this can "
+                    "conflict with generally accepted chart-design principles. "
+                    "See docs/chart-design.md.",
+                    subplot_num,
+                    len(axes),
+                )
+            axes_by_side = {"left": [], "right": []}
+            for variable in plot_y_vars:
+                axis_name = axis_by_var[variable]
+                side = axis_config.get(variable, {}).get("side", "left")
+                if axis_name not in axes_by_side[side]:
+                    axes_by_side[side].append(axis_name)
+            for side, side_axes in axes_by_side.items():
+                for index, axis_name in enumerate(side_axes):
+                    graph.layout[axis_name].update(
+                        side=side,
+                        position=0 if side == "left" else 1,
+                        showticklabels=index == 0,
+                        title=None if index else graph.layout[axis_name].title,
+                    )
 
         if multi_axis:
             for trace_num, trace in enumerate(graph.data, start=1):
@@ -360,20 +505,27 @@ def make_stacked_graph(
                 domain=[x_domain_start, 1], anchor="y{}".format(trace_num)
             )
 
-        graph.update_xaxes(
-            showline=True,
-            showgrid=True,
-            gridcolor=axis_line_color,
-            zerolinecolor=axis_line_color,
-            linecolor=axis_line_color,
-            linewidth=3,
-            showticklabels=xaxis_showticklabels
-        )
-        if datachecker.is_time_type(x_var):
+        for subplot_num in range(1, num_subplots + 1):
             graph.update_xaxes(
-                tickformat='%Y-%m-%d %H:%M:%S',
-                type='date'
+                showline=True,
+                showgrid=True,
+                gridcolor=axis_line_color,
+                zerolinecolor=axis_line_color,
+                linecolor=axis_line_color,
+                linewidth=3,
+                showticklabels=(
+                    xaxis_showticklabels and subplot_num == num_subplots
+                ),
+                row=subplot_num,
+                col=1,
             )
+            if datachecker.is_time_type(x_var):
+                graph.update_xaxes(
+                    tickformat='%Y-%m-%d %H:%M:%S',
+                    type='date',
+                    row=subplot_num,
+                    col=1,
+                )
 
         graph.update_yaxes(
             showline=True,
@@ -407,7 +559,9 @@ def make_stacked_graph(
 
         x_unit = dtatdata.get_unit_from_state(data, x_var)
         graph.update_xaxes(
-            title_text=f'{x_var} ({x_unit})' if x_unit is not None else f'{x_var}'
+            title_text=f'{x_var} ({x_unit})' if x_unit is not None else f'{x_var}',
+            row=num_subplots,
+            col=1,
         )
 
         if figure_width is not None:

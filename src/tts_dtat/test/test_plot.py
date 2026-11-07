@@ -45,6 +45,19 @@ def test_make_stacked_graph_basic(plotting_data):
     assert fig.data[0].name == "A"
     assert fig.data[1].name == "B"
 
+def test_stacked_graph_only_labels_bottom_x_axis(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A"], ["B"]],
+        x_var="scet",
+    )
+
+    assert fig.layout.xaxis.title.text is None
+    assert fig.layout.xaxis2.title.text == "scet (Time)"
+    assert fig.layout.xaxis.showticklabels is False
+    assert fig.layout.xaxis2.showticklabels is True
+
+
 def test_make_stacked_graph_single_subplot(plotting_data):
     """Test generating a graph where multiple vars share a subplot."""
     y_vars = [["A", "B"]]
@@ -149,3 +162,229 @@ def test_make_bar_graph(plotting_data):
     # Accessing fig.data[0].y tuple/list
     # Note: Interpolation might reorder things, but values should align.
     assert fig.data[0].y[0] == 5
+
+
+def test_multi_channel_subplot_uses_concise_default_axis_title(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A", "B"]])
+
+    assert fig.layout.yaxis.title.text == "Unknown Units"
+    assert len(fig.layout.yaxis.title.text) < 20
+
+
+def test_multiple_units_are_joined_in_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_units_from_states",
+        lambda data, names: ["V", "A", "Ohm"],
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A", "B"]])
+
+    assert fig.layout.yaxis.title.text == "V/A/Ohm"
+
+
+def test_long_combined_units_use_various_units_label(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_units_from_states",
+        lambda data, names: ["very-long-unit-name", "another-long-unit-name", "third-unit"],
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A", "B"]])
+
+    assert fig.layout.yaxis.title.text == "Various Units"
+
+
+def test_none_units_use_no_units_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_unit_from_state",
+        lambda data, name: None,
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
+
+    assert fig.layout.yaxis.title.text == "No Units"
+
+
+def test_none_string_units_use_no_units_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_unit_from_state",
+        lambda data, name: "NONE",
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
+
+    assert fig.layout.yaxis.title.text == "No Units"
+
+
+def test_unknown_units_use_unknown_units_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_unit_from_state",
+        lambda data, name: "unknown",
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
+
+    assert fig.layout.yaxis.title.text == "Unknown Units"
+
+
+def test_placeholder_units_use_unknown_units_axis_title(plotting_data, monkeypatch):
+    monkeypatch.setattr(
+        plot.dtatdata,
+        "get_unit_from_state",
+        lambda data, name: "???",
+    )
+    fig, _, _, _ = plot.make_stacked_graph(plotting_data, [["A"]])
+
+    assert fig.layout.yaxis.title.text == "Unknown Units"
+
+
+def test_multi_channel_subplot_honors_explicit_axis_title(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A", "B"]],
+        y_axis_title=["Receiver lock state"],
+    )
+
+    assert fig.layout.yaxis.title.text == "Receiver lock state"
+
+
+def test_background_bands_default_to_all_subplots(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A"], ["B"]],
+        vertical_bands=[
+            {
+                "x0": pd.Timestamp("2020-01-01 10:30"),
+                "x1": pd.Timestamp("2020-01-01 11:30"),
+                "color": "rgba(10, 20, 30, 0.25)",
+            }
+        ],
+    )
+
+    assert len(fig.layout.shapes) == 2
+    assert {shape.yref for shape in fig.layout.shapes} == {"y domain", "y2 domain"}
+    assert all(shape.fillcolor == "rgba(10, 20, 30, 0.25)" for shape in fig.layout.shapes)
+    assert all(shape.layer == "below" for shape in fig.layout.shapes)
+
+
+def test_background_bands_can_target_selected_subplots(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A"], ["B"]],
+        vertical_bands=[
+            {
+                "x0": pd.Timestamp("2020-01-01 10:30"),
+                "x1": pd.Timestamp("2020-01-01 11:30"),
+                "subplots": [2],
+                "color": "rgba(10, 20, 30, 0.25)",
+            }
+        ],
+    )
+
+    assert len(fig.layout.shapes) == 1
+    assert fig.layout.shapes[0].yref == "y2 domain"
+
+
+def test_axis_config_places_secondary_axis_on_right(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A", "B"]],
+        axis_config={
+            "A": {"side": "left", "range": [0, 40], "title": "Primary"},
+            "B": {"side": "right", "range": [0, 30], "title": "Secondary"},
+        },
+    )
+
+    assert fig.layout.yaxis.overlaying is None
+    assert fig.layout.yaxis2.overlaying == "y"
+    assert fig.layout.yaxis.side == "left"
+    assert fig.layout.yaxis2.side == "right"
+    assert list(fig.layout.yaxis2.range) == [0, 30]
+    assert fig.layout.yaxis2.title.text == "Secondary"
+
+
+def test_more_than_two_axes_logs_design_warning(plotting_data, monkeypatch):
+    warnings = []
+    monkeypatch.setattr(
+        plot.logger,
+        "warning",
+        lambda message, *args: warnings.append(message % args if args else message),
+    )
+    data = pd.concat(
+        [
+            plotting_data,
+            plotting_data.assign(name="C", value=plotting_data["value"] + 1),
+        ],
+        ignore_index=True,
+    )
+
+    plot.make_stacked_graph(
+        data,
+        [["A", "B", "C"]],
+        multi_axis=True,
+        axis_config={
+            "A": {"side": "left", "title": "A"},
+            "B": {"side": "left", "title": "B"},
+            "C": {"side": "left", "title": "C"},
+        },
+    )
+
+    assert len(warnings) == 1
+    assert "more than two" in warnings[0]
+    assert "docs/chart-design.md" in warnings[0]
+
+
+def test_bands_follow_subplots_when_axes_are_overlaid(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A", "B"], ["A"]],
+        multi_axis=True,
+        vertical_bands=[
+            {
+                "x0": pd.Timestamp("2020-01-01 10:30"),
+                "x1": pd.Timestamp("2020-01-01 11:30"),
+                "subplots": [1, 2],
+                "color": "rgba(10, 20, 30, 0.25)",
+            }
+        ],
+    )
+
+    assert [shape.yref for shape in fig.layout.shapes] == ["y domain", "y3 domain"]
+
+
+def test_multi_axis_plot_does_not_reserve_trace_count_space(plotting_data):
+    data = pd.concat(
+        [
+            plotting_data,
+            plotting_data.assign(name="C", value=plotting_data["value"] + 1),
+        ],
+        ignore_index=True,
+    )
+    fig, _, _, _ = plot.make_stacked_graph(
+        data,
+        [["A", "B", "C"]],
+        multi_axis=True,
+        axis_config={
+            "A": {"side": "left", "title": "A"},
+            "B": {"side": "left", "title": "B"},
+            "C": {"side": "right", "title": "C"},
+        },
+    )
+
+    assert fig.layout.xaxis.domain[0] <= 0.05
+
+
+def test_duplicate_axis_side_labels_are_hidden(plotting_data):
+    fig, _, _, _ = plot.make_stacked_graph(
+        plotting_data,
+        [["A", "B"]],
+        multi_axis=True,
+        axis_config={
+            "A": {"side": "left", "title": "A"},
+            "B": {"side": "left", "title": "B"},
+        },
+    )
+
+    assert fig.layout.yaxis.side == "left"
+    assert fig.layout.yaxis.showticklabels is True
+    assert fig.layout.yaxis2.side == "left"
+    assert fig.layout.yaxis2.showticklabels is False
